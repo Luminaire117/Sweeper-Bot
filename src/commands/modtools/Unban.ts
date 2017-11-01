@@ -76,16 +76,15 @@ export default class Mute extends Command<SweeperClient> {
 			}
 
 			// Set default info
-			let note: string = '';
-			const unbanMsg: string = 'Please be kind to each other and read our rules in #rules-and-info.';
-			note = this.parseNote(args);
-			if (note.length === 0) { note = 'Please be kind to each other and read our rules in #rules-and-info.'; }
+			let unbanMsg: string = '';
+			unbanMsg = this.parseNote(args);
+			if (unbanMsg.length === 0) { unbanMsg = 'Please be kind to each other and read our rules in #rules-and-info.'; }
 
 			// Confirm unban action
 			let embed: RichEmbed = new RichEmbed();
 			embed = await this.client.mod.actions.getHistory(user, message.guild);
 			// embed.setColor(Constants.banEmbedColor);
-			embed.setDescription(`**Unan Reason:** ${note}`);
+			embed.setDescription(`**Unan Reason:** ${unbanMsg}`);
 
 			const [result, ask, confirmation]: [PromptResult, Message, Message] = <[PromptResult, Message, Message]> await prompt(message,
 				'Are you sure you want to issue this action? (__y__es | __n__o)',
@@ -122,7 +121,7 @@ export default class Mute extends Command<SweeperClient> {
 					unbanning = <Message> await message.channel.send(`Attempting action...`);
 				}
 
-				this.client.mod.actions.unban(user, moderator, message.guild, note);
+				this.client.mod.actions.unban(user, moderator, message.guild, unbanMsg);
 				this.logger.log('CMD Unban', `Removed ban for user: '${user.tag}' from '${message.guild.name}'`);
 
 				// If message sent in the mod channel, then give full details, otherwise be vague

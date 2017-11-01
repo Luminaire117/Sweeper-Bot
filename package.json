@@ -33,6 +33,7 @@
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "sequelize": "^4.19.0",
+    "snekfetch": "^3.5.8",
     "web-request": "1.0.7",
     "yamdbf": "^3.0.1",
     "yamdbf-dm-manager": "github:zajrik/yamdbf-dm-manager"
