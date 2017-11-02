@@ -3,6 +3,7 @@ import { GuildStorage, Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
 import Constants from '../../Constants';
 import * as moment from 'moment';
+import { MuteManager } from '../mod/managers/MuteManager';
 
 export class Helpers
 {
@@ -66,6 +67,38 @@ export class Helpers
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
 				throw new Error(err);
 			});
+	}
+	// Antispam - repeating messages
+	public async antispamRepeatingMessages(message: Message) {
+		// if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		if (message.author.bot) return;
+
+		if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
+			message.member.spamContent = message.cleanContent.toLowerCase();
+			message.member.spamCounter = 0;
+			message.member.spamTimer   = message.createdTimestamp;
+		}
+		if (message.cleanContent.toLowerCase() === message.member.spamContent || message.cleanContent.length < 2 || message.createdTimestamp - message.member.spamTimer < 1000) {
+			message.member.spamCounter += 1;
+		} else {
+			message.member.spamContent = message.cleanContent.toLowerCase();
+			message.member.spamCounter = 1;
+		}
+		message.member.spamTimer = message.createdTimestamp;
+		if (message.member.spamCounter === 3) {
+			message.delete();
+			message.channel.send(`<@${message.member.id}>, Do not repeat the same message or spam images, I am about to mute you!`).then(msg => {
+				if (msg instanceof Message) {
+					msg.delete(2000);
+				}
+			});
+		}
+		if (message.member.spamCounter > 3) {
+			message.delete();
+			if (await new MuteManager(this._client).isMuted(message.member)) return;
+			this._client.commands.find('name', 'mute').action(message, [message.member.id, '1200000', 'Spamming.']);
+			message.author.send(`You have been muted on **${message.guild.name}** for **20 minutes**.\n\n**A message from the mods:**\n\n"Please do not spam."`);
+		}
 	}
 
 	// Antispam - Twitch Links

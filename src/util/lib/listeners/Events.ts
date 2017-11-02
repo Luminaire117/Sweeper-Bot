@@ -1,7 +1,7 @@
 import { GuildStorage, ListenerUtil, Logger, logger } from 'yamdbf';
 import { Collection, TextChannel, RichEmbed, Message, MessageReaction, Guild, GuildMember, Role, User, VoiceChannel } from 'discord.js';
 import { SweeperClient } from '../SweeperClient';
-import { MuteManager } from '../mod/managers/MuteManager';
+import * as MuteManager from '../mod/managers/MuteManager';
 import Constants from '../../Constants';
 import * as moment from 'moment';
 
@@ -284,9 +284,13 @@ export class Events {
 	@on('message')
 	private async onMessage(message: Message): Promise<void>
 	{
+
 		// dm, group, text, voice
 		if (message.channel.type !== 'text') return;
 		const msgChannel: TextChannel = <TextChannel> message.channel;
+
+		// repeating messages spam
+		this._client.mod.helpers.antispamRepeatingMessages(message);
 
 		// Discord invite link spam
 		if (Constants.discordInviteRegExp.test(message.content)) {
