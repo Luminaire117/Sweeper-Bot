@@ -97,7 +97,7 @@ export default class Mute extends Command<SweeperClient> {
 			}
 
 			try {
-				await gmUser.send(`You have received a message from the **${message.guild.name}** server moderators:\n\n"${note}"${Constants.footer}`)
+				await gmUser.send(`You have received a message from the **${message.guild.name}** server moderators:\n\n"${note}"${Constants.footerGeneral}`)
 					.then((res) => {
 						// Inform in chat that the warn was success, wait a few sec then delete that success msg
 						this.logger.log('CMD Send', `Sent message to user: '${gmUser.user.tag}' in '${message.guild.name}'`);

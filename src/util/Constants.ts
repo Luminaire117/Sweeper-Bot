@@ -14,6 +14,8 @@ export type BotConstants = {
 	baseVoiceChannelIdThree: string;
 	whitelistedChannels: Array<string>;
 	antispamBypassId: string;
+	voiceCategoryOpenId: string;
+	voiceCategoryInUseId: string;
 
 	// API Data
 	vendorEngramsAPIBase: string;
@@ -56,6 +58,7 @@ export type BotConstants = {
 
 	channelNames: Array<string>;
 	footer: string;
+	footerGeneral: string;
 };
 
 // tslint:disable-next-line:variable-name
@@ -75,6 +78,8 @@ Constants.whitelistedChannels = ['255099898897104908', '323564629139652619', '36
 								'342111927788634114', '297866918839451651', '322492361861103616', '332354014903664641',
 								'368940297876668427', '369952267975000081', '360193326365933599', '370065490065883137'];
 Constants.antispamBypassId = config.ServerData.antispamBypassId;
+Constants.voiceCategoryOpenId = config.ServerData.voiceCategoryOpenId;
+Constants.voiceCategoryInUseId = config.ServerData.voiceCategoryInUseId;
 
 // API Data
 Constants.vendorEngramsAPIBase = 'https://api.vendorengrams.xyz/getVendorDrops?key=';
@@ -140,4 +145,5 @@ Constants.channelNames = ['Adonna', 'Agah', 'Agema', 'Aiat', 'Aksor', 'Alak-Hul'
 	'Dawnblade', 'Stormcaller', 'Voidwalker', 'Arcstrider', 'Gunslinger', 'Nightstalker', 'Striker', 'Sentinel', 'Sunbreaker'];
 
 Constants.footer = `\n\n**Special Note:** If you reply to this message it will be sent to the moderator team. If you are unable to reply to the bot, please check that you have not blocked the bot, disabled server messages, and share a server with the bot. If you do not share a server with the bot, you may join this one: ${Constants.appealsServer}.`;
+Constants.footerGeneral = `\n\n**Special Note:** If you reply to this message it will be sent to the moderator team.`;
 export default Constants;

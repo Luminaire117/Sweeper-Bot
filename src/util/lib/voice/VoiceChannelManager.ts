@@ -1,10 +1,9 @@
-const fetch = require('snekfetch');
-
 import { Collection, Guild, GuildChannel, GuildMember, VoiceChannel } from 'discord.js';
 import { GuildStorage, ListenerUtil, Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
 import Constants from '../../Constants';
 import * as Schedule from 'node-schedule';
+const fetch = require('snekfetch');
 
 export default class VoiceChannelManager {
 	@logger
@@ -38,7 +37,7 @@ export default class VoiceChannelManager {
 		let channelsForDeletion: Array<VoiceChannel> = this.getChannelsForDeletion(guild).map((channel: VoiceChannel) => { return channel; });
 
 		// If more than 6 total open channels then remove all but 2
-		if (emptyChannels.length > 6) {
+		if (emptyChannels.length > 5) {
 			let numbChanToRemove: number = channelsForDeletion.length - 2;
 			for (let x: number = 0; x < numbChanToRemove; x++) {
 				await channelsForDeletion[x].delete();
@@ -50,7 +49,7 @@ export default class VoiceChannelManager {
 		for (let vChannel of emptyChannels) {
 			// If voice channel is empty, move to empty category
 			if (vChannel.members.size === 0) {
-				await this.moveChannelInsideCategory(vChannel, '374309025925300244');
+				await this.moveChannelInsideCategory(vChannel, Constants.voiceCategoryOpenId);
 				// this.logger.log('VoiceChannelManager', `Moved Voice Channel: ${vChannel.name} to Open Category.`);
 			}
 		}
@@ -59,9 +58,9 @@ export default class VoiceChannelManager {
 	public async curateNonEmptyChannels(guild: Guild): Promise<void> {
 		let nonEmptyChannels = await this.getNonEmptyVoiceChannels(guild).map((channel: VoiceChannel) => { return channel; });
 		for (let vChannel of nonEmptyChannels) {
-			// If voice channel is empty, move to empty category
+			// If voice channel is empty, move to in use category
 			if (vChannel.members.size > 1) {
-				await this.moveChannelInsideCategory(vChannel, '355887285281226762');
+				await this.moveChannelInsideCategory(vChannel, Constants.voiceCategoryInUseId);
 				// this.logger.log('VoiceChannelManager', `Moved Voice Channel: ${vChannel.name} to In Use Category.`);
 			}
 		}
@@ -100,12 +99,12 @@ export default class VoiceChannelManager {
 				parent_id: parent,
 				lock_permissions: true
 				}];
-			const request = fetch['patch'](`https://canary.discordapp.com/api/v6/guilds/${channel.guild.id}/channels`);
+			const request = fetch['patch'](`https://discordapp.com/api/v6/guilds/${channel.guild.id}/channels`);
 				request.set('Authorization', `Bot ${this.client.token}`);
 				request.set('Content-Type', 'application/json');
 				request.send(data);
 				request.end();
-			return request;
+			return;
 		}
 		catch (error) {
 			return this.logger.error('VoiceChannelManager', `Error moving channel: ${channel}. Error: ${error}`);

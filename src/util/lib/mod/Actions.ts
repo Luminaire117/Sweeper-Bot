@@ -114,26 +114,31 @@ export class Actions
 		}
 		catch (err) {
 			this.logger.error('Actions', `Error logging ban: '${user.tag}' in '${guild.name}'. Error: ${err}`);
-			this._client.database.commands.ban.addBan(guild.id, moderator.id, user.id, actionlength, note);
-			return <GuildMember> await guild.ban(user, { reason: note, days: 7 });
 		}
+
+		this._client.database.commands.ban.addBan(guild.id, moderator.id, user.id, actionlength, note);
+		return <GuildMember> await guild.ban(user, { reason: note, days: 7 });
 	}
 
 	// Unban a user from a guild. Requires knowledge of the user's ID
 	public async unban(user: User, moderator: GuildMember, guild: Guild, note: string): Promise<User>
 	{
-		const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
-		const embed: RichEmbed = new RichEmbed()
-			.setColor(Constants.warnEmbedColor)
-			.setAuthor(moderator.user.tag, moderator.user.avatarURL)
-			.setDescription(`**Member:** ${user.tag} (${user.id})\n`
-				+ `**Action:** Unban\n`
-				+ `**Reason:** ${note}`)
-			.setTimestamp();
-		logChannel.send({ embed: embed });
+		try {
+			const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
+			const embed: RichEmbed = new RichEmbed()
+				.setColor(Constants.warnEmbedColor)
+				.setAuthor(moderator.user.tag, moderator.user.avatarURL)
+				.setDescription(`**Member:** ${user.tag} (${user.id})\n`
+					+ `**Action:** Unban\n`
+					+ `**Reason:** ${note}`)
+				.setTimestamp();
+			logChannel.send({ embed: embed });
+		}
+		catch (err) {
+			this.logger.error('Actions', `Error logging unban: '${user.tag}' in '${guild.name}'. Error: ${err}`);
+		}
 
 		this._client.database.commands.ban.removeBan(guild.id, moderator.id, user.id, note);
-
 		return await guild.unban(user.id);
 	}
 
