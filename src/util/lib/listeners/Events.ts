@@ -168,7 +168,7 @@ export class Events {
 
 		// Platform
 		roles[0] = reaction.message.guild.roles.find('name', 'PC');
-		roles[1] = reaction.message.guild.roles.find('name', 'Playstation');
+		roles[1] = reaction.message.guild.roles.find('name', 'PlayStation');
 		roles[2] = reaction.message.guild.roles.find('name', 'Xbox');
 		// Spoilers Enabled
 		roles[3] = reaction.message.guild.roles.find('name', 'Spoilers Enabled');
