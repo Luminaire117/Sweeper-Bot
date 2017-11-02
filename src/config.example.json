@@ -14,7 +14,9 @@
 		"baseVoiceChannelIdOne": "Channel ID",
 		"baseVoiceChannelIdTwo": "Channel ID",
 		"baseVoiceChannelIdThree": "Channel ID",
-		"antispamBypassId": "Role ID"
+		"antispamBypassId": "Role ID",
+		"voiceCategoryOpenId": "Category ID",
+		"voiceCategoryInUseId": "Category ID"
 	},
 	"APIKeys": {
 		"VendorEngramsXYZ": "Get Key From vendorengrams.xyz"

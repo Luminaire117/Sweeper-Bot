@@ -54,7 +54,7 @@ export class Events {
 
 		// Platform
 		roles[0] = reaction.message.guild.roles.find('name', 'PC');
-		roles[1] = reaction.message.guild.roles.find('name', 'Playstation');
+		roles[1] = reaction.message.guild.roles.find('name', 'PlayStation');
 		roles[2] = reaction.message.guild.roles.find('name', 'Xbox');
 		// Spoilers Enabled
 		roles[3] = reaction.message.guild.roles.find('name', 'Spoilers Enabled');
@@ -168,7 +168,7 @@ export class Events {
 
 		// Platform
 		roles[0] = reaction.message.guild.roles.find('name', 'PC');
-		roles[1] = reaction.message.guild.roles.find('name', 'Playstation');
+		roles[1] = reaction.message.guild.roles.find('name', 'PlayStation');
 		roles[2] = reaction.message.guild.roles.find('name', 'Xbox');
 		// Spoilers Enabled
 		roles[3] = reaction.message.guild.roles.find('name', 'Spoilers Enabled');
@@ -346,10 +346,9 @@ export class Events {
 										`\n\n` +
 										`Please note the following planned Destiny maintenance event(s).` +
 										`\n\n` +
-										`__**Thursday October 19th, 2017 [2017-10-19]**__\n` +
+										`__**Thursday November 2nd, 2017 [2017-11-02]**__\n` +
 										`**STARTS:** 8 AM PDT (3 PM UTC) \n` +
 										`**ENDS:** 12 PM PDT (7 PM UTC) \n` +
-										`**Details:** <https://twitter.com/BungieHelp/status/920786039303675904>` +
 										`\n\n` +
 										`Note: Maintenance times, including end time, are subject to change by Bungie without notice. For more info see @BungieHelp on Twitter or <https://www.bungie.net/en/Help/Article/13125> Thank you.`);
 					return;
