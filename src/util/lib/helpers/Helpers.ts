@@ -30,7 +30,7 @@ export class Helpers
 		}
 
 		message.delete();
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Discord invite links are not permitted."`)
 			.then((res) => {
@@ -54,7 +54,7 @@ export class Helpers
 		const antispamType: string = 'Mass Mention Spam';
 
 		const regexMatch: string = '6+ mentions';
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Do not spam mentions. This includes mentioning a lot of users at once."`)
 			.then((res) => {
@@ -70,8 +70,7 @@ export class Helpers
 	}
 	// Antispam - repeating messages
 	public async antispamRepeatingMessages(message: Message) {
-		// if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
-		if (message.author.bot) return;
+		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId) || message.author.bot) return;
 
 		if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
 			message.member.spamContent = message.cleanContent.toLowerCase();
@@ -87,7 +86,7 @@ export class Helpers
 		message.member.spamTimer = message.createdTimestamp;
 		if (message.member.spamCounter === 3) {
 			message.delete();
-			message.channel.send(`<@${message.member.id}>, Do not repeat the same message or spam images, I am about to mute you!`).then(msg => {
+			message.channel.send(`<@${message.member.id}>, You are sending too many messages too quickly. Please slow down or you will be muted.`).then(msg => {
 				if (msg instanceof Message) {
 					msg.delete(2000);
 				}
@@ -96,8 +95,18 @@ export class Helpers
 		if (message.member.spamCounter > 3) {
 			message.delete();
 			if (await new MuteManager(this._client).isMuted(message.member)) return;
-			this._client.commands.find('name', 'mute').action(message, [message.member.id, '1200000', 'Spamming.']);
-			message.author.send(`You have been muted on **${message.guild.name}** for **20 minutes**.\n\n**A message from the mods:**\n\n"Please do not spam."`);
+			this._client.commands.find('name', 'mute').action(message, [message.member.id, '20m', 'Repeating/quick message spam.']);
+			message.member.spamCounter = 0;
+			const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
+			const embed: RichEmbed = new RichEmbed()
+				.setColor(Constants.muteEmbedColor)
+				.setAuthor(this._client.user.tag, this._client.user.avatarURL)
+				.setDescription(`**Member:** ${message.author.tag} (${message.author.id})\n`
+					+ `**Action:** Mute\n`
+					+ `**Length:** 20m\n`
+					+ `**Reason:** Spamming.`)
+				.setTimestamp();
+			modChannel.send({ embed: embed });
 		}
 	}
 
@@ -110,7 +119,7 @@ export class Helpers
 		const antispamType: string = 'Twitch Links Blacklisted';
 
 		const regexMatch: string = Constants.twitchRegExp.exec(message.content)[0];
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Do not post twitch links without mod approval."`)
 			.then((res) => {
@@ -126,7 +135,7 @@ export class Helpers
 	}
 
 	// Logs message in channel
-	public async logMessage(message: Message, msgChannel: TextChannel, regexMatch: string, reason: string): Promise<void>
+	public async logMessage(message: Message, regexMatch: string, reason: string): Promise<void>
 	{
 		const logChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.logChannelId);
 		const embed: RichEmbed = new RichEmbed()
@@ -135,7 +144,7 @@ export class Helpers
 			.setDescription(`**Action:** Message Deleted\n`
 				+ `**Reason:** ${reason}\n`
 				+ `**Match:** ${regexMatch}\n`
-				+ `**Channel:** #${msgChannel.name} (${message.channel.id})\n`
+				+ `**Channel:** #${message.channel instanceof TextChannel ? message.channel.name : ''} (${message.channel.id})\n`
 				+ `**Message:** (${message.id})\n\n`
 				+ `${message.cleanContent}`)
 			.setTimestamp();
