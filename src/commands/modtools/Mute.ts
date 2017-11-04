@@ -112,7 +112,7 @@ export default class Mute extends Command<SweeperClient> {
 				return message.delete();
 			}
 
-			if (user.id === message.author.id || user.id === message.guild.ownerID || user.bot) {
+			if (user.id === message.guild.ownerID || user.bot) {
 				message.channel.send('You may not use this command on that user.');
 				return message.delete();
 			}

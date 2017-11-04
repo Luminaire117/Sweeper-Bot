@@ -236,7 +236,7 @@ export class Actions
 			.catch(error => {
 				// Known error with PG version: https://github.com/sequelize/sequelize/issues/8043
 				// "TypeError: Cannot read property '0' of undefined"
-				this.logger.error('Users', `Error setting userJoin. Known error. Error: ${error}`);
+				// this.logger.error('Users', `Error setting userJoin. Known error. Error: ${error}`);
 			});
 	}
 
@@ -251,7 +251,7 @@ export class Actions
 			.catch(error => {
 				// Known error with PG version: https://github.com/sequelize/sequelize/issues/8043
 				// "TypeError: Cannot read property '0' of undefined"
-				this.logger.error('Users', `Error setting userPart. Known error. Error: ${error}`);
+				// this.logger.error('Users', `Error setting userPart. Known error. Error: ${error}`);
 			});
 	}
 }

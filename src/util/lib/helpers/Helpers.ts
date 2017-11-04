@@ -3,6 +3,7 @@ import { GuildStorage, Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
 import Constants from '../../Constants';
 import * as moment from 'moment';
+import { MuteManager } from '../mod/managers/MuteManager';
 
 export class Helpers
 {
@@ -29,7 +30,7 @@ export class Helpers
 		}
 
 		message.delete();
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Discord invite links are not permitted."`)
 			.then((res) => {
@@ -53,7 +54,7 @@ export class Helpers
 		const antispamType: string = 'Mass Mention Spam';
 
 		const regexMatch: string = '6+ mentions';
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Do not spam mentions. This includes mentioning a lot of users at once."`)
 			.then((res) => {
@@ -68,6 +69,64 @@ export class Helpers
 			});
 	}
 
+	// Antispam - repeating messages
+	public async antispamRepeatingMessages(message: Message): Promise<void>
+	{
+		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId) || message.author.bot) return;
+		const antispamRepeatingMessages: boolean = false;
+		// 				#off-topic								#d2-discussion
+		if (message.channel.id === '157728722999443456' || message.channel.id === '332152701829906432')
+		{
+			if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
+				message.member.spamContent = message.cleanContent.toLowerCase();
+				message.member.spamCounter = 0;
+				message.member.spamTimer   = message.createdTimestamp;
+			}
+			if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent || message.cleanContent.length < 2) {
+				message.member.spamCounter += 1;
+			} else {
+				message.member.spamContent = message.cleanContent.toLowerCase();
+				message.member.spamCounter = 1;
+			}
+			message.member.spamTimer = message.createdTimestamp;
+
+			if (message.member.spamCounter === 4) {
+				if (antispamRepeatingMessages) {
+					message.channel.send(`<@${message.member.id}>, You are sending too many (or the same) messages too quickly. Please slow down or you will be muted.`);
+					message.delete()
+						.then((msg) => { return; })
+						.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
+				} else {
+					message.channel.send(`<@!82942340309716992> - Alert type 1`);
+				}
+			}
+
+			if (message.member.spamCounter > 4) {
+				if (antispamRepeatingMessages) {
+					if (await new MuteManager(this._client).isMuted(message.member)) return;
+					this._client.commands.find('name', 'mute').action(message, [message.member.id, '20m', 'Repeating/quick message spam.']);
+					message.member.spamCounter = 0;
+					const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
+					const embed: RichEmbed = new RichEmbed()
+						.setColor(Constants.muteEmbedColor)
+						.setAuthor(this._client.user.tag, this._client.user.avatarURL)
+						.setDescription(`**Member:** ${message.author.tag} (${message.author.id})\n`
+							+ `**Action:** Mute\n`
+							+ `**Length:** 20m\n`
+							+ `**Reason:** Repeating/quick message spam.`)
+						.setTimestamp();
+					modChannel.send({ embed: embed });
+					message.delete()
+						.then((msg) => { return; })
+						.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
+				} else {
+					message.member.spamCounter = 0;
+					message.channel.send(`<@!82942340309716992> - Alert type 2`);
+				}
+			}
+		}
+	}
+
 	// Antispam - Twitch Links
 	public async antispamTwitchLinks(message: Message, msgChannel: TextChannel): Promise<void>
 	{
@@ -77,7 +136,7 @@ export class Helpers
 		const antispamType: string = 'Twitch Links Blacklisted';
 
 		const regexMatch: string = Constants.twitchRegExp.exec(message.content)[0];
-		this.logMessage(message, msgChannel, regexMatch, antispamType);
+		this.logMessage(message, regexMatch, antispamType);
 
 		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Do not post twitch links without mod approval."`)
 			.then((res) => {
@@ -93,7 +152,7 @@ export class Helpers
 	}
 
 	// Logs message in channel
-	public async logMessage(message: Message, msgChannel: TextChannel, regexMatch: string, reason: string): Promise<void>
+	public async logMessage(message: Message, regexMatch: string, reason: string): Promise<void>
 	{
 		const logChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.logChannelId);
 		const embed: RichEmbed = new RichEmbed()
@@ -102,7 +161,7 @@ export class Helpers
 			.setDescription(`**Action:** Message Deleted\n`
 				+ `**Reason:** ${reason}\n`
 				+ `**Match:** ${regexMatch}\n`
-				+ `**Channel:** #${msgChannel.name} (${message.channel.id})\n`
+				+ `**Channel:** #${message.channel instanceof TextChannel ? message.channel.name : ''} (${message.channel.id})\n`
 				+ `**Message:** (${message.id})\n\n`
 				+ `${message.cleanContent}`)
 			.setTimestamp();
