@@ -35,13 +35,34 @@ export class Events {
 		const voiceLogs: TextChannel = <TextChannel> newMember.guild.channels.find('name', 'voice-logs');
 		let oldUsers: Array<User>;
 		let newUsers: Array<User>;
-		if (oldUserChannel !== undefined) { oldUsers = oldUserChannel.members.map((member: GuildMember) => member.user); }
-		if (newUserChannel !== undefined) { newUsers = newUserChannel.members.map((member: GuildMember) => member.user); }
+		if (oldUserChannel !== undefined) {
+			oldUsers = oldUserChannel.members.map((member: GuildMember) => member.user);
+			oldUsers.push(oldMember.user);
+		}
+		if (newUserChannel !== undefined) {
+			newUsers = newUserChannel.members.map((member: GuildMember) => member.user);
+		}
+
+		let channelStatus: string = '';
+		if (oldUserChannel === undefined) {
+			channelStatus = 'Joined Voice Channel';
+		} else if (newUserChannel === undefined) {
+			channelStatus = 'Left Voice Channel';
+		} else if (oldUserChannel !== undefined && newUserChannel !== undefined) {
+			channelStatus = 'Moved Voice channel';
+		}
+
+		let userAudioChange: boolean = false;
+		if ((oldMember.mute && !newMember.mute) || (!oldMember.mute && newMember.mute) ||
+			(oldMember.deaf && !oldMember.deaf) || (!oldMember.deaf && newMember.deaf)) {
+			userAudioChange = true;
+			return;
+		}
 
 		const embed: RichEmbed = new RichEmbed()
 			.setColor(0xff69b4)
 			.setAuthor(`${newMember.user.tag} (${newMember.id})`, newMember.user.avatarURL)
-			.setDescription(`**Reason:** Voice Channel Change\n`
+			.setDescription(`**Reason:** ${channelStatus}\n`
 					+ `**Old Channel:** ${oldUserChannel ? oldUserChannel.name : ''} (${oldUserChannel ? oldUserChannel.id : ''})\n`
 					+ `**Old Channel Users:** ${oldUsers ? oldUsers.toString() : ''}\n`
 					+ `**New Channel:** ${newUserChannel ? newUserChannel.name : ''} (${newUserChannel ? newUserChannel.id : ''})\n`
