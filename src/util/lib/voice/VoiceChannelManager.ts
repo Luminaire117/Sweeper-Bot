@@ -25,7 +25,7 @@ export default class VoiceChannelManager {
 		});
 
 		await _this.curateNonEmptyChannels(guild);
-		await Schedule.scheduleJob('*/2 * * * *', async function() {
+		await Schedule.scheduleJob('*/5 * * * *', async function() {
 			await _this.curateNonEmptyChannels(guild);
 		});
 
@@ -104,6 +104,7 @@ export default class VoiceChannelManager {
 				request.set('Content-Type', 'application/json');
 				request.send(data);
 				request.end();
+			await new Promise((r: any) => setTimeout(r, 500));
 			return;
 		}
 		catch (error) {

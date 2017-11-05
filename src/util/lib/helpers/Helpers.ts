@@ -82,7 +82,7 @@ export class Helpers
 				message.member.spamCounter = 0;
 				message.member.spamTimer   = message.createdTimestamp;
 			}
-			if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent || message.cleanContent.length < 2) {
+			if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent) {
 				message.member.spamCounter += 1;
 			} else {
 				message.member.spamContent = message.cleanContent.toLowerCase();

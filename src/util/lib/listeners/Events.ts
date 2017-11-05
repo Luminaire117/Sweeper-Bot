@@ -20,14 +20,34 @@ export class Events {
 
 	@on('voiceStateUpdate')
 	private async _onVoiceStateUpdate(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
+		let oldUserChannel = oldMember.voiceChannel;
+		let newUserChannel = newMember.voiceChannel;
 		let emptyChannels: number = this._client.voiceChannelManager.getEmptyVoiceChannels(newMember.guild).size;
 		let makeChannel: boolean = false;
 
 		if (emptyChannels <= 2)
 			makeChannel = true;
 
-		if ((newMember.voiceChannel !== undefined && newMember.voiceChannelID !== null && newMember.voiceChannel.name.startsWith('Fireteam ')) && makeChannel)
+		if ((newMember.voiceChannel !== undefined && newMember.voiceChannelID !== null && newMember.voiceChannel.name.startsWith('Fireteam ')) && makeChannel) {
 			this._client.voiceChannelManager.createChannel(newMember);
+		}
+
+		const voiceLogs: TextChannel = <TextChannel> newMember.guild.channels.find('name', 'voice-logs');
+		let oldUsers: Array<User>;
+		let newUsers: Array<User>;
+		if (oldUserChannel !== undefined) { oldUsers = oldUserChannel.members.map((member: GuildMember) => member.user); }
+		if (newUserChannel !== undefined) { newUsers = newUserChannel.members.map((member: GuildMember) => member.user); }
+
+		const embed: RichEmbed = new RichEmbed()
+			.setColor(0xff69b4)
+			.setAuthor(`${newMember.user.tag} (${newMember.id})`, newMember.user.avatarURL)
+			.setDescription(`**Reason:** Voice Channel Change\n`
+					+ `**Old Channel:** ${oldUserChannel ? oldUserChannel.name : ''} (${oldUserChannel ? oldUserChannel.id : ''})\n`
+					+ `**Old Channel Users:** ${oldUsers ? oldUsers.toString() : ''}\n`
+					+ `**New Channel:** ${newUserChannel ? newUserChannel.name : ''} (${newUserChannel ? newUserChannel.id : ''})\n`
+					+ `**New Channel Users:** ${newUsers ? newUsers.toString() : ''}`)
+			.setTimestamp();
+		voiceLogs.send({ embed });
 	}
 
 	@on('messageReactionAdd')
