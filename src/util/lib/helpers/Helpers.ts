@@ -73,56 +73,52 @@ export class Helpers
 	public async antispamRepeatingMessages(message: Message): Promise<void>
 	{
 		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId) || message.author.bot) return;
-		const antispamRepeatingMessages: boolean = false;
-		// 				#off-topic								#d2-discussion
-		if (message.channel.id === '157728722999443456' || message.channel.id === '332152701829906432')
-		{
-			if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
-				message.member.spamContent = message.cleanContent.toLowerCase();
-				message.member.spamCounter = 0;
-				message.member.spamTimer   = message.createdTimestamp;
-			}
-			if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent) {
-				message.member.spamCounter += 1;
+		const antispamRepeatingMessagesEnabled: boolean = true;
+		if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
+			message.member.spamContent = message.cleanContent.toLowerCase();
+			message.member.spamCounter = 0;
+			message.member.spamTimer   = message.createdTimestamp;
+		}
+		if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent) {
+			message.member.spamCounter += 1;
+		} else {
+			message.member.spamContent = message.cleanContent.toLowerCase();
+			message.member.spamCounter = 1;
+		}
+		message.member.spamTimer = message.createdTimestamp;
+
+		if (message.member.spamCounter === 4) {
+			if (antispamRepeatingMessagesEnabled) {
+				message.channel.send(`<@${message.member.id}>, You are sending too many (or the same) messages too quickly. Please slow down or you will be muted.`);
+				message.delete()
+					.then((msg) => { return; })
+					.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
 			} else {
-				message.member.spamContent = message.cleanContent.toLowerCase();
-				message.member.spamCounter = 1;
+				message.channel.send(`<@!82942340309716992> - Alert type 1`);
 			}
-			message.member.spamTimer = message.createdTimestamp;
+		}
 
-			if (message.member.spamCounter === 4) {
-				if (antispamRepeatingMessages) {
-					message.channel.send(`<@${message.member.id}>, You are sending too many (or the same) messages too quickly. Please slow down or you will be muted.`);
-					message.delete()
-						.then((msg) => { return; })
-						.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
-				} else {
-					message.channel.send(`<@!82942340309716992> - Alert type 1`);
-				}
-			}
-
-			if (message.member.spamCounter > 4) {
-				if (antispamRepeatingMessages) {
-					if (await new MuteManager(this._client).isMuted(message.member)) return;
-					this._client.commands.find('name', 'mute').action(message, [message.member.id, '20m', 'Repeating/quick message spam.']);
-					message.member.spamCounter = 0;
-					const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
-					const embed: RichEmbed = new RichEmbed()
-						.setColor(Constants.muteEmbedColor)
-						.setAuthor(this._client.user.tag, this._client.user.avatarURL)
-						.setDescription(`**Member:** ${message.author.tag} (${message.author.id})\n`
-							+ `**Action:** Mute\n`
-							+ `**Length:** 20m\n`
-							+ `**Reason:** Repeating/quick message spam.`)
-						.setTimestamp();
-					modChannel.send({ embed: embed });
-					message.delete()
-						.then((msg) => { return; })
-						.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
-				} else {
-					message.member.spamCounter = 0;
-					message.channel.send(`<@!82942340309716992> - Alert type 2`);
-				}
+		if (message.member.spamCounter > 4) {
+			if (antispamRepeatingMessagesEnabled) {
+				if (await new MuteManager(this._client).isMuted(message.member)) return;
+				this._client.commands.find('name', 'mute').action(message, [message.member.id, '20m', 'Repeating/quick message spam.']);
+				message.member.spamCounter = 0;
+				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
+				const embed: RichEmbed = new RichEmbed()
+					.setColor(Constants.muteEmbedColor)
+					.setAuthor(this._client.user.tag, this._client.user.avatarURL)
+					.setDescription(`**Member:** ${message.author.tag} (${message.author.id})\n`
+						+ `**Action:** Mute\n`
+						+ `**Length:** 20m\n`
+						+ `**Reason:** Repeating/quick message spam.`)
+					.setTimestamp();
+				modChannel.send({ embed: embed });
+				message.delete()
+					.then((msg) => { return; })
+					.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
+			} else {
+				message.member.spamCounter = 0;
+				message.channel.send(`<@!82942340309716992> - Alert type 2`);
 			}
 		}
 	}
