@@ -79,6 +79,9 @@ export class Helpers
 			message.member.spamCounter = 0;
 			message.member.spamTimer   = message.createdTimestamp;
 		}
+		if (message.createdTimestamp - message.member.spamTimer > 240000) {
+			message.member.spamCounter = 1;
+		}
 		if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent) {
 			message.member.spamCounter += 1;
 		} else {
@@ -89,7 +92,7 @@ export class Helpers
 
 		if (message.member.spamCounter === 4) {
 			if (antispamRepeatingMessagesEnabled) {
-				message.channel.send(`<@${message.member.id}>, You are sending too many (or the same) messages too quickly. Please slow down or you will be muted.`);
+				message.channel.send(`<@${message.member.id}>, You are sending too many messages too quickly, or the same message too many times. Please slow down and don't post repetative messages or you will be muted.`);
 				message.delete()
 					.then((msg) => { return; })
 					.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
