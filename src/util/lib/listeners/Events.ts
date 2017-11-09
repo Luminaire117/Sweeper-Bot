@@ -364,7 +364,7 @@ export class Events {
 				case '!!role':
 					message.channel.send(`Hello ${mentions}` +
 										`\n\n` +
-										`Please go to <#224197509738790922> and set your platform role(s). You can do this by clicking on the reaction/emote. This allows us to know what platform(s) you are on (or will play on), and opens the LFG channel(s) for you.`);
+										`Please go to <#224197509738790922> and set your platform role(s). You can do this by clicking on the reaction/emote. This allows us to know what platform(s) you are on (or will play on), and **opens the LFG channel(s) as well as the voice channels** for you.`);
 					return;
 
 				case '!!raid':

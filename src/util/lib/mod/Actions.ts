@@ -18,7 +18,7 @@ export class Actions
 
 	// Mute Actions
 	// Mute a user in a guild
-	public async mute(gmUser: GuildMember, issuer: GuildMember, guild: Guild, actionlength: string, note: string): Promise<void>
+	public async mute(gmUser: GuildMember, issuer: User, guild: Guild, actionlength: string, note: string): Promise<void>
 	{
 		const storage: GuildStorage = this._client.storage.guilds.get(guild.id);
 
@@ -36,7 +36,7 @@ export class Actions
 				const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
 				const embed: RichEmbed = new RichEmbed()
 					.setColor(Constants.muteEmbedColor)
-					.setAuthor(issuer.user.tag, issuer.user.avatarURL)
+					.setAuthor(issuer.tag, issuer.avatarURL)
 					.setDescription(`**Member:** ${gmUser.user.tag} (${gmUser.user.id})\n`
 						+ `**Action:** Mute\n`
 						+ `**Length:** ${actionlength}\n`

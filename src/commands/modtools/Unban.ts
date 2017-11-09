@@ -84,7 +84,7 @@ export default class Mute extends Command<SweeperClient> {
 			let embed: RichEmbed = new RichEmbed();
 			embed = await this.client.mod.actions.getHistory(user, message.guild);
 			// embed.setColor(Constants.banEmbedColor);
-			embed.setDescription(`**Unan Reason:** ${unbanMsg}`);
+			embed.setDescription(`**Unban Reason:** ${unbanMsg}`);
 
 			const [result, ask, confirmation]: [PromptResult, Message, Message] = <[PromptResult, Message, Message]> await prompt(message,
 				'Are you sure you want to issue this action? (__y__es | __n__o)',

@@ -32,8 +32,7 @@ export default class Mute extends Command<SweeperClient> {
 	public async action(message: Message, args: Array<any>): Promise<any> {
 		// grab the storage
 		const guildStorage: GuildStorage = this.client.storage.guilds.get(message.guild.id);
-
-		let issuer: GuildMember = message.member;
+		let issuer: User;
 		let user: User;
 
 		// no user specified
@@ -85,6 +84,13 @@ export default class Mute extends Command<SweeperClient> {
 		}
 
 		if (user) {
+			// Workaround for antispam automute setting issuer as person being muted.
+			if (message.member.user === user) {
+				issuer = this.client.user;
+			} else {
+				issuer = message.member.user;
+			}
+
 			// Get milliseconds of mute length, otherwise set default
 			let muteTimeMS: number;
 			let muteTimeHUMN: string;

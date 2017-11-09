@@ -113,7 +113,8 @@ export class Helpers
 					.setDescription(`**Member:** ${message.author.tag} (${message.author.id})\n`
 						+ `**Action:** Mute\n`
 						+ `**Length:** 20m\n`
-						+ `**Reason:** Repeating/quick message spam.`)
+						+ `**Reason:** Repeating/quick message spam.\n`
+						+ `**Channel:** #${message.channel instanceof TextChannel ? message.channel.name : ''} (${message.channel.id})`)
 					.setTimestamp();
 				modChannel.send({ embed: embed });
 				message.delete()
