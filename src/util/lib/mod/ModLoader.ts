@@ -37,6 +37,7 @@ export class ModLoader
 	public async init(): Promise<void>
 	{
 		await this.managers.mute.init();
+		await this.helpers.init();
 	}
 
 	/** Check whether the channel for case logging has been set for a guild */

@@ -6,6 +6,7 @@ import WarnModel from '../models/Warn';
 import NotesModel from '../models/Notes';
 import BanModel from '../models/Ban';
 import UsersModel from '../models/Users';
+import StatsModel from '../models/Statistics';
 
 export class MuteCommands extends Command {
 	public constructor(connection: any) {
@@ -141,4 +142,16 @@ export class UsersCommands extends Command {
 	public userPart(userID: string, userName: string, serverID: string, svrPartDate: Date): Promise<void> {
 		return this.model.upsert({ userID, userName, serverID, svrPartDate });
 	}
+}
+
+export class StatsCommands extends Command {
+	public constructor(connection: any) {
+		super();
+		this.model = new StatsModel(connection).get();
+	}
+
+	public add(serverID: string, totalUsers: number, concurrentUsers: number, totalVoiceUsers: number): Promise<void> {
+		return this.model.create({ serverID, totalUsers, concurrentUsers, totalVoiceUsers });
+	}
+
 }

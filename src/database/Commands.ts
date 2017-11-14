@@ -1,4 +1,4 @@
-import { MuteCommands, WarnCommands, NoteCommands, BanCommands, UsersCommands } from './commands/Cmds';
+import { MuteCommands, WarnCommands, NoteCommands, BanCommands, UsersCommands, StatsCommands } from './commands/Cmds';
 
 export default class Commands {
 	public readonly note: NoteCommands;
@@ -6,6 +6,7 @@ export default class Commands {
 	public readonly warn: WarnCommands;
 	public readonly ban: BanCommands;
 	public readonly users: UsersCommands;
+	public readonly stats: StatsCommands;
 
 	public constructor(connection: any) {
 		this.note = new NoteCommands(connection);
@@ -13,5 +14,6 @@ export default class Commands {
 		this.warn = new WarnCommands(connection);
 		this.ban = new BanCommands(connection);
 		this.users = new UsersCommands(connection);
+		this.stats = new StatsCommands(connection);
 	}
 }

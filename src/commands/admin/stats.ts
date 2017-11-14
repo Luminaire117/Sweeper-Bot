@@ -26,6 +26,7 @@ export default class Mute extends Command<SweeperClient> {
 			for (let vChannel of nonEmptyChannels) {
 				totalVoiceUsers += vChannel.members.size;
 			}
+			this.client.database.commands.stats.add(message.guild.id, totalUsers, concurrentUsers, totalVoiceUsers);
 			return message.channel.send(`__**Server Stats:**__` +
 										`\n\n` +
 										`**Total Server Users:** ${totalUsers}\n` +

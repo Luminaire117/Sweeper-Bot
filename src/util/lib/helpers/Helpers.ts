@@ -1,9 +1,10 @@
-import { Collection, GuildMember, Guild, Invite, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
+import { Collection, GuildChannel, GuildMember, Guild, Invite, Message, RichEmbed, Role, User, TextChannel, VoiceChannel } from 'discord.js';
 import { GuildStorage, Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
+import { MuteManager } from '../mod/managers/MuteManager';
 import Constants from '../../Constants';
 import * as moment from 'moment';
-import { MuteManager } from '../mod/managers/MuteManager';
+import * as Schedule from 'node-schedule';
 
 export class Helpers
 {
@@ -12,6 +13,18 @@ export class Helpers
 	public constructor(client: SweeperClient)
 	{
 		this._client = client;
+	}
+
+	public async init(): Promise<void> {
+		let _this: Helpers = this;
+		const guild: Guild = <Guild> this._client.guilds.get(Constants.serverId);
+
+		await _this.logServerStats(guild);
+		await Schedule.scheduleJob('1 * * * *', async function() {
+			await _this.logServerStats(guild);
+		});
+
+		this.logger.log('Helpers: Stats', `Stats Logging Started.`);
 	}
 
 	// Antispam - Discord Invite Links
@@ -79,7 +92,7 @@ export class Helpers
 			message.member.spamCounter = 0;
 			message.member.spamTimer   = message.createdTimestamp;
 		}
-		if (message.createdTimestamp - message.member.spamTimer > 240000) {
+		if (message.createdTimestamp - message.member.spamTimer > 180000) {
 			message.member.spamCounter = 1;
 		}
 		if (message.createdTimestamp - message.member.spamTimer < 1000 || message.cleanContent.toLowerCase() === message.member.spamContent) {
@@ -167,6 +180,33 @@ export class Helpers
 			.setTimestamp();
 		logChannel.send({ embed: embed });
 		return;
+	}
+
+	public async logServerStats(guild: Guild): Promise<void>
+	{
+		try {
+			const concurrentUsers: number = this._client.users.filter(u => u.presence.status !== 'offline').size;
+			const totalUsers: number = guild.memberCount;
+			let totalVoiceUsers: number = 0;
+
+			let nonEmptyChannels = await this.getNonEmptyVoiceChannels(guild).map((channel: VoiceChannel) => { return channel; });
+			for (let vChannel of nonEmptyChannels) {
+				totalVoiceUsers += vChannel.members.size;
+			}
+
+			this._client.database.commands.stats.add(Constants.serverId, totalUsers, concurrentUsers, totalVoiceUsers);
+
+		} catch (err) {
+			return this.logger.error('CMD stats', `Error logging bot stats. Error: ${err}`);
+		}
+	}
+
+	public getNonEmptyVoiceChannels(guild: Guild): Collection<string, GuildChannel> {
+		return guild.channels.filter((channel: VoiceChannel, key: string, collection: Collection<string, VoiceChannel>) => {
+			return (
+				channel.type === 'voice' &&
+				channel.members.size !== 0);
+		});
 	}
 
 }
