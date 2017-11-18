@@ -76,14 +76,6 @@ export class Events {
 		if (user.id === this._client.user.id)
 			return;
 
-		// 296023718839451649 == @Charlemagne#3214
-		// 294882584201003009 == @GiveawayBot#2381
-		if (user.id === '296023718839451649' || user.id === '294882584201003009')
-			return;
-
-		if (user.bot)
-			return reaction.remove(user);
-
 		const reactionAuthor: GuildMember = await reaction.message.guild.fetchMember(user);
 		let guildStorage: GuildStorage = await this._client.storage.guilds.get(reaction.message.guild.id);
 
