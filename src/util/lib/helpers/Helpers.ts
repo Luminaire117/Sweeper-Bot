@@ -35,7 +35,7 @@ export class Helpers
 		const regexInviteCode: string = Constants.discordInviteCodeRegExp.exec(regexMatch)[1];
 		let discordInvites: Collection<string, Invite> = await message.guild.fetchInvites().then(invites => invites);
 
-		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
 		if (regexInviteCode && discordInvites) {
 			let inviteCodes = discordInvites.map(invite => invite.code);
 			if (inviteCodes.includes(regexInviteCode))
@@ -62,7 +62,7 @@ export class Helpers
 	// Antispam - Mass Mentions
 	public async antispamMassMentions(message: Message, msgChannel: TextChannel): Promise<void>
 	{
-		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
 		message.delete();
 		const antispamType: string = 'Mass Mention Spam';
 
@@ -85,7 +85,7 @@ export class Helpers
 	// Antispam - repeating messages
 	public async antispamRepeatingMessages(message: Message): Promise<void>
 	{
-		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId) || message.author.bot) return;
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
 		const antispamRepeatingMessagesEnabled: boolean = true;
 		if (!message.member.spamContent) { // Initializes the spamcontent for bot restarts/new user.
 			message.member.spamContent = message.cleanContent.toLowerCase();
@@ -143,7 +143,7 @@ export class Helpers
 	// Antispam - Twitch Links
 	public async antispamTwitchLinks(message: Message, msgChannel: TextChannel): Promise<void>
 	{
-		if (message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
 		if (message.content.includes('twitch.tv/bungie') || message.content.includes('twitch.tv\\bungie') || message.content.includes('clips.twitch.tv')) return;
 		message.delete();
 		const antispamType: string = 'Twitch Links Blacklisted';
