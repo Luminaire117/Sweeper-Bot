@@ -26,8 +26,10 @@
   ],
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "discord.js-musicbot-addon": "github:r-DestinyTheGame/discord.js-musicbot-addon",
     "fuzzy": "^0.1.3",
     "moment": "^2.19.1",
+    "node-opus": "^0.2.7",
     "node-schedule": "^1.2.4",
     "pg": "7.3.0",
     "request": "^2.81.0",

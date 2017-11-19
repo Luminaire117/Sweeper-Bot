@@ -6,11 +6,15 @@ import { VendorEngramManager } from './helpers/VendorEngrams';
 import { ModLoader } from '../lib/mod/ModLoader';
 import VoiceChannelManager from './voice/VoiceChannelManager';
 import Database from '../../database/Database';
+import Constants from '../Constants';
 
 const { dmManager } = require('yamdbf-dm-manager');
 const config: any = require('../../config.json');
 const credentials: any = require('../../database.json');
 const { once } = ListenerUtil;
+const music = require('discord.js-musicbot-addon');
+
+const testing: boolean = false;
 
 export class SweeperClient extends Client {
 	@logger private readonly logger: Logger;
@@ -23,6 +27,7 @@ export class SweeperClient extends Client {
 	public mod: ModLoader;
 	public voiceChannelManager: VoiceChannelManager;
 	public vendorEngramManager: VendorEngramManager;
+	public music: any;
 
 	// constructor
 	public constructor() {
@@ -79,20 +84,39 @@ export class SweeperClient extends Client {
 		await this.vendorEngramManager.init();
 		this.logger.info('CORE', `Connected to: VendorEngramManager`);
 
-		try {
-			for (let [channelID, chanObj] of this.channels.filter(chan => chan.type === 'text')) {
-				let channel: TextChannel = <TextChannel> this.channels.find('id', channelID);
-				if (channel && channel.guild.id === config.ServerData.botDMServerId) { continue; }
-				channel.fetchMessages({limit: 100})
-					.then((res) => {
-						this.logger.info('CORE', `Fetched message history for: ${channel.name} in ${channel.guild.name}`);
-					})
-					.catch((err) => {
-						this.logger.info('CORE', `Error with fetchMessages: ${err}`);
-					});
+		this.music = new music(this, {
+			youtubeKey: Constants.youtubeAPIKey,
+			musicVoiceChannelId: Constants.musicVoiceChannelId,
+			prefix: '-',
+			global: false,
+			maxQueueSize: 25,
+			helpCmd: 'help',
+			playCmd: 'play',
+			volumeCmd: 'volume',
+			leaveCmd: 'stop',
+			disableLoop: true,
+			anyoneCanSkip: false,
+			anyoneCanAdjust: false,
+			defVolume: 25,
+		});
+		this.logger.info('CORE', `Connected to: Music`);
+
+		if (!testing) {
+			try {
+				for (let [channelID, chanObj] of this.channels.filter(chan => chan.type === 'text')) {
+					let channel: TextChannel = <TextChannel> this.channels.find('id', channelID);
+					if (channel && channel.guild.id === config.ServerData.botDMServerId) { continue; }
+					channel.fetchMessages({limit: 100})
+						.then((res) => {
+							this.logger.info('CORE', `Fetched message history for: ${channel.name} in ${channel.guild.name}`);
+						})
+						.catch((err) => {
+							this.logger.info('CORE', `Error with fetchMessages in ${channel.name}: ${err}`);
+						});
+				}
 			}
+			catch (err) { this.logger.info('CORE', `Error retrieving message history: ${err}`); }
 		}
-		catch (err) { this.logger.info('CORE', `Error retrieving message history: ${err}`); }
 	}
 
 	@once('disconnect')

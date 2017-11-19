@@ -10,6 +10,7 @@ cache:
     - node_modules
 
 before_install:
+  - npm install -g minimatch
   - npm explore npm -g -- npm install node-gyp@latest
   - rm package-lock.json
 

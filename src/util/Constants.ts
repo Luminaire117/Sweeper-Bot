@@ -16,11 +16,13 @@ export type BotConstants = {
 	antispamBypassId: string;
 	voiceCategoryOpenId: string;
 	voiceCategoryInUseId: string;
+	musicVoiceChannelId: string;
 
 	// API Data
 	vendorEngramsAPIBase: string;
 	vendorEngramsAPIKey: string;
 	vendorEngramsVendors: any;
+	youtubeAPIKey: string;
 
 	// RegExp
 	platformRegExp: RegExp;
@@ -80,11 +82,13 @@ Constants.whitelistedChannels = ['255099898897104908', '323564629139652619', '36
 Constants.antispamBypassId = config.ServerData.antispamBypassId;
 Constants.voiceCategoryOpenId = config.ServerData.voiceCategoryOpenId;
 Constants.voiceCategoryInUseId = config.ServerData.voiceCategoryInUseId;
+Constants.musicVoiceChannelId = config.ServerData.musicVoiceChannelId;
 
 // API Data
 Constants.vendorEngramsAPIBase = 'https://api.vendorengrams.xyz/getVendorDrops?key=';
 Constants.vendorEngramsAPIKey = config.APIKeys.VendorEngramsXYZ;
 Constants.vendorEngramsVendors = vendors;
+Constants.youtubeAPIKey = config.APIKeys.YouTube;
 
 // RegExp
 Constants.platformRegExp = new RegExp('(\\bpc\\b)|(\\bpsn\\b)|(\\bps\\b)|(\\bxbl\\b)|(\\bxb\\b)|(\\bxbox\\b)', 'i');
