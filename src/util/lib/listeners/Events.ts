@@ -341,10 +341,10 @@ export class Events {
 		if (Constants.twitchRegExp.test(message.content)) {
 			this._client.mod.helpers.antispamTwitchLinks(message, msgChannel);
 			return;
-		} 
+		}
 
 		// Mixer.com link spam
-		if (Constants.twitchRegExp.test(message.content)) {
+		if (message.content.includes('mixer.com')) {
 			this._client.mod.helpers.antispamMixerLinks(message, msgChannel);
 			return;
 		}
