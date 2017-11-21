@@ -75,6 +75,9 @@ export class SweeperClient extends Client {
 	@once('clientReady')
 	private async _onClientReady(): Promise<void>
 	{
+		try { await this.user.setPresence({ game: { name: 'DM me to msg Mods', type: 0 } });
+		} catch (err) { this.logger.info('CORE', `Error during setPresence: ${err}`); }
+
 		await this.mod.init();
 		this.logger.info('CORE', `Connected to: ModLoader`);
 		await this.roleManager.init();
