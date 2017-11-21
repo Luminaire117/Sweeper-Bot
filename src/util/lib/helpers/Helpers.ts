@@ -45,7 +45,7 @@ export class Helpers
 		message.delete();
 		this.logMessage(message, regexMatch, antispamType);
 
-		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Discord invite links are not permitted."`)
+		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"External Discord invite links are not permitted."`)
 			.then((res) => {
 				// Inform in chat that the warn was success, wait a few sec then delete that success msg
 				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Warned: ${antispamType}`);
@@ -53,7 +53,7 @@ export class Helpers
 			})
 			.catch((err) => {
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
-				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user posted a **Discord Invite Link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
+				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user posted an **External Discord Invite Link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
 				throw new Error(err);
 			});
@@ -159,6 +159,29 @@ export class Helpers
 			.catch((err) => {
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user **posted a twitch link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
+				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
+				throw new Error(err);
+			});
+	}
+
+	// Antispam - Mixer.com Links
+	public async antispamMixerLinks(message: Message, msgChannel: TextChannel): Promise<void>
+	{
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		message.delete();
+		const antispamType: string = 'Mixer.com Links Blacklisted';
+
+		const regexMatch: string = Constants.twitchRegExp.exec(message.content)[0];
+		this.logMessage(message, regexMatch, antispamType);
+
+		await message.member.user.send(`You have been warned on **${message.guild.name}**.\n\n**A message from the mods:**\n\n"Do not post Mixer.com links without mod approval."`)
+			.then((res) => {
+				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Warned: ${antispamType}`);
+				this.logger.log('Helpers Warn', `Warned user (${antispamType}): '${message.member.user.tag}' in '${message.guild.name}'`);
+			})
+			.catch((err) => {
+				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
+				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user **posted a Mixer.com link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
 				throw new Error(err);
 			});

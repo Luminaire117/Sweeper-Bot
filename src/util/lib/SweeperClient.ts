@@ -97,7 +97,7 @@ export class SweeperClient extends Client {
 			disableLoop: true,
 			anyoneCanSkip: false,
 			anyoneCanAdjust: false,
-			defVolume: 25,
+			defVolume: 20,
 		});
 		this.logger.info('CORE', `Connected to: Music`);
 
