@@ -16,9 +16,11 @@
 		"baseVoiceChannelIdThree": "Channel ID",
 		"antispamBypassId": "Role ID",
 		"voiceCategoryOpenId": "Category ID",
-		"voiceCategoryInUseId": "Category ID"
+		"voiceCategoryInUseId": "Category ID",
+		"musicVoiceChannelId": "Channel ID"
 	},
 	"APIKeys": {
-		"VendorEngramsXYZ": "Get Key From vendorengrams.xyz"
+		"VendorEngramsXYZ": "Get Key From vendorengrams.xyz",
+		"YouTube": "Get From YouTube v3"
 	}
 }
