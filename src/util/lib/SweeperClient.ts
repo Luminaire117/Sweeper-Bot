@@ -75,9 +75,7 @@ export class SweeperClient extends Client {
 	@once('clientReady')
 	private async _onClientReady(): Promise<void>
 	{
-		try { await this.user.setPresence({ game: { name: 'DM me to msg Mods', type: 0 } });
-		} catch (err) { this.logger.info('CORE', `Error during setPresence: ${err}`); }
-
+		this.setStatus('Loading...');
 		await this.mod.init();
 		this.logger.info('CORE', `Connected to: ModLoader`);
 		await this.roleManager.init();
@@ -86,44 +84,51 @@ export class SweeperClient extends Client {
 		this.logger.info('CORE', `Connected to: VoiceChannelManager`);
 		await this.vendorEngramManager.init();
 		this.logger.info('CORE', `Connected to: VendorEngramManager`);
-
-		this.music = new music(this, {
-			youtubeKey: Constants.youtubeAPIKey,
-			musicVoiceChannelId: Constants.musicVoiceChannelId,
-			prefix: '-',
-			global: false,
-			maxQueueSize: 25,
-			helpCmd: 'help',
-			playCmd: 'play',
-			volumeCmd: 'volume',
-			leaveCmd: 'stop',
-			disableLoop: true,
-			anyoneCanSkip: false,
-			anyoneCanAdjust: false,
-			defVolume: 20,
-		});
-		this.logger.info('CORE', `Connected to: Music`);
-
-		if (!testing) {
-			try {
-				for (let [channelID, chanObj] of this.channels.filter(chan => chan.type === 'text')) {
-					let channel: TextChannel = <TextChannel> this.channels.find('id', channelID);
-					if (channel && channel.guild.id === config.ServerData.botDMServerId) { continue; }
-					channel.fetchMessages({limit: 100})
-						.then((res) => {
-							this.logger.info('CORE', `Fetched message history for: ${channel.name} in ${channel.guild.name}`);
-						})
-						.catch((err) => {
-							this.logger.info('CORE', `Error with fetchMessages in ${channel.name}: ${err}`);
-						});
-				}
-			}
-			catch (err) { this.logger.info('CORE', `Error retrieving message history: ${err}`); }
-		}
+		if (Constants.youtubeAPIKey && Constants.musicVoiceChannelId) { this.loadMusic(); }
+		if (!testing) { this.loadMessages(); }
+		await this.setStatus(config.status);
 	}
 
 	@once('disconnect')
 	private async _onDisconnect(): Promise<void> {
 		process.exit(100);
+	}
+
+	private async setStatus(statusText: string): Promise<void> {
+		try { this.user.setPresence({ game: { name: statusText, url: 'https://DestinyReddit.com/discord' } });
+		} catch (err) { this.logger.info('CORE', `Error during setPresence: ${err}`); }
+	}
+
+	private async loadMessages(): Promise<void> {
+		try {
+			for (let [channelID, chanObj] of this.channels.filter(chan => chan.type === 'text')) {
+				let channel: TextChannel = <TextChannel> this.channels.find('id', channelID);
+				if (channel && channel.guild.id === config.ServerData.botDMServerId) { continue; }
+				channel.fetchMessages({limit: 100})
+					.then((res) => { this.logger.info('CORE', `Fetched message history for: ${channel.name} in ${channel.guild.name}`); })
+					.catch((err) => { this.logger.info('CORE', `Error with fetchMessages in ${channel.name}: ${err}`); });
+			}
+		} catch (err) { this.logger.info('CORE', `Error retrieving message history: ${err}`); }
+	}
+
+	private async loadMusic(): Promise<void> {
+		try {
+			this.music = new music(this, {
+				youtubeKey: Constants.youtubeAPIKey,
+				musicVoiceChannelId: Constants.musicVoiceChannelId,
+				prefix: '-',
+				global: false,
+				maxQueueSize: 25,
+				helpCmd: 'help',
+				playCmd: 'play',
+				volumeCmd: 'volume',
+				leaveCmd: 'stop',
+				disableLoop: true,
+				anyoneCanSkip: false,
+				anyoneCanAdjust: false,
+				defVolume: 20,
+			});
+			this.logger.info('CORE', `Connected to: Music`);
+		} catch (err) { this.logger.info('CORE', `Error loading Music plugin: ${err}`); }
 	}
 }
