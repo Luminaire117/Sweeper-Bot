@@ -52,6 +52,7 @@ export class Helpers
 				this.logger.log('Helpers Warn', `Warned user (${antispamType}): '${message.member.user.tag}' in '${message.guild.name}'`);
 			})
 			.catch((err) => {
+				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Failed warn: ${antispamType}`);
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user posted an **External Discord Invite Link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
@@ -75,6 +76,7 @@ export class Helpers
 				this.logger.log('Helpers Warn', `Warned user (${antispamType}): '${message.member.user.tag}' in '${message.guild.name}'`);
 			})
 			.catch((err) => {
+				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Failed warn: ${antispamType}`);
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user **spammed mentions**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
@@ -157,6 +159,7 @@ export class Helpers
 				this.logger.log('Helpers Warn', `Warned user (${antispamType}): '${message.member.user.tag}' in '${message.guild.name}'`);
 			})
 			.catch((err) => {
+				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Failed warn: ${antispamType}`);
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user **posted a twitch link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
@@ -180,6 +183,7 @@ export class Helpers
 				this.logger.log('Helpers Warn', `Warned user (${antispamType}): '${message.member.user.tag}' in '${message.guild.name}'`);
 			})
 			.catch((err) => {
+				this._client.database.commands.warn.addWarn(message.guild.id, this._client.user.id, message.member.user.id, `Failed warn: ${antispamType}`);
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error informing ${message.member.user.tag} (${message.member.user.id}) of their warning (automatically). This user **posted a Mixer.com link**. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 				this.logger.log('Helpers Warn', `Unable to warn user: '${message.member.user.tag}' in '${message.guild.name}'`);
