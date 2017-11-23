@@ -301,16 +301,19 @@ export class Events {
 		const sweeperLogs: TextChannel = <TextChannel> message.member.guild.channels.find('name', 'deleted-logs');
 		const msgChannel: TextChannel = <TextChannel> message.channel;
 		const msgCreatedAt = moment(message.createdAt).utc();
-		const embed: RichEmbed = new RichEmbed()
-			.setColor(6039746)
-			.setAuthor(`${message.member.user.tag} (${message.member.id})`, message.member.user.avatarURL)
-			.setDescription(`**Reason:** A Message Was Deleted\n`
+		const embed: RichEmbed = new RichEmbed();
+		embed.setColor(6039746);
+		embed.setAuthor(`${message.member.user.tag} (${message.member.id})`, message.member.user.avatarURL);
+		embed.setDescription(`**Reason:** A Message Was Deleted\n`
 					// + `**Channel:** Name: ${message.channel.name} | Category Name: ${message.channel.parent.name} | ID: ${message.channel.id}\n`
 					+ `**Channel:** #${msgChannel.name} (${message.channel.id})\n`
 					+ `**Message Timestamp:** ${msgCreatedAt} UTC\n`
 					+ `**Message:** (${message.id})\n\n`
-					+ `${message.cleanContent}`)
-			.setTimestamp();
+					+ `${message.cleanContent}`);
+		if (message.attachments.size !== 0) {
+			embed.addField('Attachment:', message.attachments.map(file => file.url))
+		}
+		embed.setTimestamp()
 		sweeperLogs.send({ embed });
 	}
 
