@@ -107,7 +107,7 @@ export class Helpers
 
 		if (message.member.spamCounter === 4) {
 			if (antispamRepeatingMessagesEnabled) {
-				message.channel.send(`<@${message.member.id}>, You are sending too many messages too quickly, or the same message too many times. Please slow down and don't post repetative messages or you will be muted.`);
+				message.channel.send(`<@${message.member.id}>, You are sending too many messages too quickly, or the same message too many times. Please slow down and don't post repetitive messages or you will be muted.`);
 				message.delete()
 					.then((msg) => { return; })
 					.catch((err) => this.logger.error('Helpers AntiSpam', `Unable to delete spam message: '${message.member.user.tag}' in '${message.guild.name}'. Error: ${err}`));
