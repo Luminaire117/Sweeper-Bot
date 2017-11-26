@@ -122,36 +122,42 @@ export default class Mute extends Command<SweeperClient> {
 				message.channel.send('You may not use this command on that user.');
 				return message.delete();
 			}
+			// If message sent in the mod channel, then give full details, otherwise be vague
+			const actionMsg: Message = <Message> await message.channel.send(`Initiating action, please wait.`);
 
-			this.client.mod.actions.mute(mutedUser, issuer, message.guild, muteTimeHUMN, note)
+			await this.client.mod.actions.mute(mutedUser, issuer, message.guild, muteTimeHUMN, note, muteTimeMS)
 				.then(result => {
-					this.client.mod.actions.setMuteDuration(mutedUser, message.guild, muteTimeMS);
 					this.logger.log('CMD Mute', `Muted user: '${mutedUser.user.tag}' in '${message.guild.name}'`);
 					try {
-						mutedUser.send(`You have been muted on **${message.guild.name}** for **${muteTimeHUMN}**.\n\n**A message from the mods:**\n\n"${note}"${Constants.footerGeneral}`);
-
-						// If message sent in the mod channel, then give full details, otherwise be vague
-						if (message.channel.id === Constants.modChannelId) {
-							message.channel.send(`Successfully muted <@${user.id}> for **${muteTimeHUMN}**. ${Constants.sweeperbot}`);
-						} else {
-							message.channel.send(`That action was successful. ${Constants.sweeperbot}`);
-							message.delete();
-						}
-
+						mutedUser.send(`You have been muted on **${message.guild.name}** for **${muteTimeHUMN}**.\n\n` +
+										`**A message from the mods:**\n\n` +
+										`"${note}"${Constants.footerGeneral}`)
+							.then(res => {
+								this.logger.log('CMD Mute', `Informed user of their mute: '${mutedUser.user.tag}' in '${message.guild.name}'`);
+								if (message.channel.id === Constants.modChannelId) {
+									actionMsg.edit(`Mute successful for: <@!${user.id}>. **Time:** *${muteTimeHUMN}*. ${Constants.sweeperbot}`);
+								} else {
+									actionMsg.edit(`That action was successful. ${Constants.sweeperbot}`);
+									message.delete();
+								}
+							})
+							.catch(error => {
+								const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
+								modChannel.send(`Unable to inform <@!${user.id}> of their mute. Rest of mute action applied..`);
+								this.logger.error('CMD Mute', `Error informing user of their muting: '${mutedUser.user.tag}' in '${message.guild.name}'.\n\n**Error:** ${error}`);
+							});
 					} catch (err) {
 						const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 						modChannel.send(`There was an error informing ${mutedUser.user.tag} of their mute. Their DMs may be disabled.\n\n**Error:**\n${err}`);
 					}
 				})
 				.catch(error => {
-					console.error(error);
 					const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 					modChannel.send(`There was an error while creating mute for <@${user.id}>. Please try again.`);
-					this.logger.error('CMD Mute', `Error muting: '${mutedUser.user.tag}' in '${message.guild.name}'`);
+					this.logger.error('CMD Mute', `Error muting: '${mutedUser.user.tag}' in '${message.guild.name}'.\n\n**Error:** ${error}`);
 				});
 
 		} else { return message.channel.send('Unable to fetchMember for the user. Is the user still in the server?'); }
-
 	}
 
 	private parseNote(args: Array<any>, noteIndex: number): string {

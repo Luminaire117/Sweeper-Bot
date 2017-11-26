@@ -18,37 +18,52 @@ export class Actions
 
 	// Mute Actions
 	// Mute a user in a guild
-	public async mute(gmUser: GuildMember, issuer: User, guild: Guild, actionlength: string, note: string): Promise<void>
+	public async mute(gmUser: GuildMember, issuer: User, guild: Guild, actionlength: string, note: string, muteTimeMS: number): Promise<void>
 	{
 		const storage: GuildStorage = this._client.storage.guilds.get(guild.id);
 
 		// Remove all roles so they can't view anything except the muted channels we want them to see.
-		gmUser.removeRoles(gmUser.roles);
+		await gmUser.setRoles([]);
 		this.logger.log('Actions', `Mute - Removed all roles for '${gmUser.user.tag}' in '${guild.name}.`);
 
+		// Add the muted role and set mute timer
 		await gmUser.addRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
 			.then(result => {
-				this.logger.log('Actions', `Mute - Added role to '${gmUser.user.tag}' in '${guild.name}.`);
-
-				this._client.mod.managers.mute.set(gmUser);
-				this._client.database.commands.mute.addMute(guild.id, issuer.id, gmUser.id, actionlength, note);
-
-				const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
-				const embed: RichEmbed = new RichEmbed()
-					.setColor(Constants.muteEmbedColor)
-					.setAuthor(issuer.tag, issuer.avatarURL)
-					.setDescription(`**Member:** ${gmUser.user.tag} (${gmUser.user.id})\n`
-						+ `**Action:** Mute\n`
-						+ `**Length:** ${actionlength}\n`
-						+ `**Reason:** ${note}`)
-					.setTimestamp();
-				logChannel.send({ embed: embed });
+				this.logger.log('Actions', `Mute - Added mute role to '${gmUser.user.tag}' in '${guild.name}.`);
+				this.setMuteDuration(gmUser, guild, muteTimeMS)
+					.then(res => {
+						this._client.database.commands.mute.addMute(guild.id, issuer.id, gmUser.id, actionlength, note)
+							.then(r => {
+								this.logger.log('Actions', `Mute - Logged mute to DB '${gmUser.user.tag}' in '${guild.name}.`);
+								const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
+								const embed: RichEmbed = new RichEmbed()
+									.setColor(Constants.muteEmbedColor)
+									.setAuthor(issuer.tag, issuer.avatarURL)
+									.setDescription(`**Member:** ${gmUser.user.tag} (${gmUser.user.id})\n`
+										+ `**Action:** Mute\n`
+										+ `**Length:** ${actionlength}\n`
+										+ `**Reason:** ${note}`)
+									.setTimestamp();
+								logChannel.send({ embed: embed });
+							})
+							.catch(error => {
+								const modChannel: TextChannel = <TextChannel> guild.channels.get(Constants.modChannelId);
+								modChannel.send(`There was an error muting <@${gmUser.user.id}>. They may have the muted role and mute timer set, but **not logged to database & not informed of the mute**`);
+								this.logger.error('Actions', `Error logging to database: '${gmUser.user.tag}' in '${guild.name}': ${error}`);
+								throw new Error('There was an error logging to database for the user');
+							});
+					})
+					.catch(error => {
+						const modChannel: TextChannel = <TextChannel> guild.channels.get(Constants.modChannelId);
+						modChannel.send(`There was an error muting <@${gmUser.user.id}>. They may have the muted role but **not informed of the mute or the action logged.**`);
+						this.logger.error('Actions', `Error setting mute and logging & informing user: '${gmUser.user.tag}' in '${guild.name}': ${error}`);
+						throw new Error('There was an error seting mute timer & logging it for the user');
+					});
 			})
 			.catch(error => {
-				console.error(error);
 				const modChannel: TextChannel = <TextChannel> guild.channels.get(Constants.modChannelId);
-				modChannel.send(`There was an error muting <@${gmUser.user.id}>. They may have the muted role but likely not informed of the mute or the action logged.`);
-				this.logger.error('Actions', `Error adding mute role: '${gmUser.user.tag}' in '${guild.name}'`);
+				modChannel.send(`There was an error muting <@${gmUser.user.id}>. **They likely don't have the muted role** & not informed of the mute or the action logged.`);
+				this.logger.error('Actions', `Error adding mute role: '${gmUser.user.tag}' in '${guild.name}': ${error}`);
 				throw new Error('There was an error muting the user');
 			});
 		return;

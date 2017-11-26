@@ -311,9 +311,9 @@ export class Events {
 					+ `**Message:** (${message.id})\n\n`
 					+ `${message.cleanContent}`);
 		if (message.attachments.size !== 0) {
-			embed.addField('Attachment:', message.attachments.map(file => file.url))
+			embed.addField('Attachment:', message.attachments.map(file => file.url));
 		}
-		embed.setTimestamp()
+		embed.setTimestamp();
 		sweeperLogs.send({ embed });
 	}
 
