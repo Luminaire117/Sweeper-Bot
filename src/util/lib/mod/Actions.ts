@@ -22,12 +22,8 @@ export class Actions
 	{
 		const storage: GuildStorage = this._client.storage.guilds.get(guild.id);
 
-		// Remove all roles so they can't view anything except the muted channels we want them to see.
-		await gmUser.setRoles([]);
-		this.logger.log('Actions', `Mute - Removed all roles for '${gmUser.user.tag}' in '${guild.name}.`);
-
 		// Add the muted role and set mute timer
-		await gmUser.addRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
+		await gmUser.setRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
 			.then(result => {
 				this.logger.log('Actions', `Mute - Added mute role to '${gmUser.user.tag}' in '${guild.name}.`);
 				this.setMuteDuration(gmUser, guild, muteTimeMS)
