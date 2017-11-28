@@ -14,7 +14,7 @@ const credentials: any = require('../../database.json');
 const { once } = ListenerUtil;
 const music = require('discord.js-musicbot-addon');
 
-const testing: boolean = false;
+const testing: boolean = config.debug;
 
 export class SweeperClient extends Client {
 	@logger private readonly logger: Logger;

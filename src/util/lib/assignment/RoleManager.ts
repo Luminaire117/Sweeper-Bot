@@ -66,7 +66,7 @@ export class RoleManager {
 				});
 			}
 			catch (err) { console.log(`Could not locate faction message.`); }
-		} else 
+		} else
 			console.log(`Could not locate channel or faction message.`);
 
 		// Bungie News
@@ -80,7 +80,7 @@ export class RoleManager {
 				});
 			}
 			catch (err) { console.log(`Could not locate bungie news message.`); }
-		} else 
+		} else
 			console.log(`Could not locate channel or bungie news message.`);
 
 		// Server News
@@ -94,7 +94,7 @@ export class RoleManager {
 				});
 			}
 			catch (err) { console.log(`Could not locate server news message.`); }
-		} else 
+		} else
 			console.log(`Could not locate channel or server news message.`);
 	}
 
