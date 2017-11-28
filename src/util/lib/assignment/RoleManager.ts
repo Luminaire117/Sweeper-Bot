@@ -19,6 +19,9 @@ export class RoleManager {
 		let platformMessageId: string = await guildStorage.get('Role Reaction Message');
 		let spoilersMessageId: string = await guildStorage.get('Spoiler Reaction Message');
 		let factionMessageId: string = await guildStorage.get('Faction Reaction Message');
+		let serverNewsMessageId: string = await guildStorage.get('ServerNews Reaction Message');
+		let bungieNewsMessageId: string = await guildStorage.get('BungieNews Reaction Message');
+
 		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.assignmentChannelId);
 		let message: Message;
 
@@ -63,9 +66,36 @@ export class RoleManager {
 				});
 			}
 			catch (err) { console.log(`Could not locate faction message.`); }
-		}
-		else
+		} else 
 			console.log(`Could not locate channel or faction message.`);
+
+		// Bungie News
+		if (bungieNewsMessageId && channel) {
+			try {
+				let _this: RoleManager = this;
+
+				await _this.reCacheMessage(channel, bungieNewsMessageId);
+				await Schedule.scheduleJob('*/30 * * * *', async function() {
+					await _this.reCacheMessage(channel, bungieNewsMessageId);
+				});
+			}
+			catch (err) { console.log(`Could not locate bungie news message.`); }
+		} else 
+			console.log(`Could not locate channel or bungie news message.`);
+
+		// Server News
+		if (serverNewsMessageId && channel) {
+			try {
+				let _this: RoleManager = this;
+
+				await _this.reCacheMessage(channel, serverNewsMessageId);
+				await Schedule.scheduleJob('*/30 * * * *', async function() {
+					await _this.reCacheMessage(channel, serverNewsMessageId);
+				});
+			}
+			catch (err) { console.log(`Could not locate server news message.`); }
+		} else 
+			console.log(`Could not locate channel or server news message.`);
 	}
 
 	public async reCacheMessage(channel: TextChannel, id: string): Promise<void> {

@@ -43,6 +43,7 @@ export type BotConstants = {
 	// Misc emoji
 	spacerEmoji: string;
 	sweeperbot: string;
+	checkmark: string;
 	// Platforms
 	blizzEmjoi: string;
 	psEmoji: string;
@@ -109,6 +110,7 @@ Constants.kickEmbedColor = '0x0083FF';
 // Misc emoji
 Constants.spacerEmoji = '<:spacer:328352361569583105>';
 Constants.sweeperbot = '<:sweeperbot:361145141173682177>';
+Constants.checkmark = '✅';
 // Platforms
 Constants.blizzEmjoi = '<:blizz:328322843227979778>';
 Constants.psEmoji = '<:ps:328322843198881792>';

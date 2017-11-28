@@ -82,6 +82,8 @@ export class Events {
 		let platformMessageId: string = await guildStorage.get('Role Reaction Message');
 		let spoilersMessageId: string = await guildStorage.get('Spoiler Reaction Message');
 		let factionMessageId: string = await guildStorage.get('Faction Reaction Message');
+		let serverNewsMessageId: string = await guildStorage.get('ServerNews Reaction Message');
+		let bungieNewsMessageId: string = await guildStorage.get('BungieNews Reaction Message');
 
 		let roles: Array<Role> = new Array();
 
@@ -95,6 +97,9 @@ export class Events {
 		roles[4] = reaction.message.guild.roles.find('name', 'Dead Orbit');
 		roles[5] = reaction.message.guild.roles.find('name', 'Future War Cult');
 		roles[6] = reaction.message.guild.roles.find('name', 'New Monarchy');
+		// Server/Bungie News
+		roles[7] = reaction.message.guild.roles.find('name', 'Discord Server News'); // Discord Server News
+		roles[8] = reaction.message.guild.roles.find('name', 'Bungie News'); // Bungie News
 
 		// Platform Message
 		if (reaction.message.id === platformMessageId) {
@@ -186,6 +191,34 @@ export class Events {
 					return;
 			}
 		}
+
+		// Discord Server News Message
+		if (reaction.message.id === serverNewsMessageId) {
+			switch (reaction.emoji.name) {
+				case Constants.checkmark:
+					if (reactionAuthor.roles.has(roles[7].id)) {
+						this.logger.info('Events', `RA: Removed Discord Server News role for ${reactionAuthor.user.tag}`);
+						return reaction.remove(user);
+					} else {
+						this.logger.info('Events', `RA: Added Discord Server News role for ${reactionAuthor.user.tag}`);
+						return await reactionAuthor.addRole(roles[7]);
+					}
+			}
+		}
+
+		// Bungie News Message
+		if (reaction.message.id === bungieNewsMessageId) {
+			switch (reaction.emoji.name) {
+				case Constants.checkmark:
+					if (reactionAuthor.roles.has(roles[8].id)) {
+						this.logger.info('Events', `RA: Removed Bungie News role for ${reactionAuthor.user.tag}`);
+						return reaction.remove(user);
+					} else {
+						this.logger.info('Events', `RA: Added Bungie News role for ${reactionAuthor.user.tag}`);
+						return await reactionAuthor.addRole(roles[8]);
+					}
+			}
+		}
 	}
 
 	@on('messageReactionRemove')
@@ -196,6 +229,8 @@ export class Events {
 		let platformMessageId: string = await guildStorage.get('Role Reaction Message');
 		let spoilersMessageId: string = await guildStorage.get('Spoiler Reaction Message');
 		let factionMessageId: string = await guildStorage.get('Faction Reaction Message');
+		let serverNewsMessageId: string = await guildStorage.get('ServerNews Reaction Message');
+		let bungieNewsMessageId: string = await guildStorage.get('BungieNews Reaction Message');
 
 		let roles: Array<Role> = new Array();
 
@@ -209,6 +244,9 @@ export class Events {
 		roles[4] = reaction.message.guild.roles.find('name', 'Dead Orbit');
 		roles[5] = reaction.message.guild.roles.find('name', 'Future War Cult');
 		roles[6] = reaction.message.guild.roles.find('name', 'New Monarchy');
+		// Server/Bungie News
+		roles[7] = reaction.message.guild.roles.find('name', 'Discord Server News'); // Discord Server News
+		roles[8] = reaction.message.guild.roles.find('name', 'Bungie News'); // Bungie News
 
 		// Platform Message
 		if (reaction.message.id === platformMessageId) {
@@ -243,6 +281,24 @@ export class Events {
 
 				case 'nm':
 					return await reactionAuthor.removeRole(roles[6]);
+			}
+		}
+
+		// Discord Server News Message
+		if (reaction.message.id === serverNewsMessageId) {
+			switch (reaction.emoji.name) {
+				case Constants.checkmark:
+					this.logger.info('Events', `RR: Removed Discord Server News role for ${reactionAuthor.user.tag}`);
+					return await reactionAuthor.removeRole(roles[7]);
+			}
+		}
+
+		// Bungie News Message
+		if (reaction.message.id === bungieNewsMessageId) {
+			switch (reaction.emoji.name) {
+				case Constants.checkmark:
+					this.logger.info('Events', `RR: Removed Bungie News role for ${reactionAuthor.user.tag}`);
+					return await reactionAuthor.removeRole(roles[8]);
 			}
 		}
 	}
