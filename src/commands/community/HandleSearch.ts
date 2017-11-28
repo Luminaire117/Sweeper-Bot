@@ -15,7 +15,8 @@ export default class HandleSearch extends Command {
 			'@mention : Find a user\'s Handle via Discord @mention\u000d' +
 			'username : Find a user\'s Handle via Discord username',
 			group: 'search',
-			guildOnly: true
+			guildOnly: true,
+			callerPermissions: ['ADMINISTRATOR'] // Setting to admin only to effectively disable this command since it's not actually used.
 		});
 	}
 

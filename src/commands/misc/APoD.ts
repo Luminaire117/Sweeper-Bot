@@ -14,7 +14,8 @@ export default class APoD extends Command {
 			info: 'Argument information below...\u000d\u000d' +
 			'r : Random APoD\u000d\u000d' +
 			'*Running the command without an argument returns the most recent APoD.',
-			group: 'misc'
+			group: 'misc',
+			callerPermissions: ['ADMINISTRATOR'] // Setting to admin only to effectively disable this command since it's not actually used.
 		});
 	}
 

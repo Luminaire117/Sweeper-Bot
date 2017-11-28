@@ -22,7 +22,8 @@ export default class Me extends Command {
 			'For Playstation         : PS or PSN\u000d' +
 			'For Xbox                : XB or XBL\u000d',
 			group: 'profile',
-			guildOnly: true
+			guildOnly: true,
+			callerPermissions: ['ADMINISTRATOR'] // Setting to admin only to effectively disable this command since it's not actually used.
 		});
 	}
 
