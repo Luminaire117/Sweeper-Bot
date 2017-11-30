@@ -444,7 +444,7 @@ export class Events {
 										`\n\n` +
 										`Please note the following planned Destiny maintenance event(s).` +
 										`\n\n` +
-										`__**Thursday November 30th, 2017 [2017-11-30]**__\n` +
+										`__**Friday December 1st, 2017 [2017-12-01]**__\n` +
 										`**STARTS:** 8 AM PST (4 PM UTC) \n` +
 										`**ENDS:** 2 PM PST (10 PM UTC) \n` +
 										`\n\n` +
