@@ -87,6 +87,11 @@ export class SweeperClient extends Client {
 		if (Constants.youtubeAPIKey && Constants.musicVoiceChannelId) { this.loadMusic(); }
 		if (!testing) { this.loadMessages(); }
 		await this.setStatus(config.status);
+
+		process.on('unhandledRejection', (reason, p) => {
+			console.error('Unhandled Rejection at: Promise', p, 'reason:', reason.stack);
+			// application specific logging, throwing an error, or other logic here
+		});
 	}
 
 	@once('disconnect')

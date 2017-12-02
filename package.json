@@ -27,24 +27,21 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "discord.js-musicbot-addon": "github:r-DestinyTheGame/discord.js-musicbot-addon",
-    "filedownloader": "^1.2.7",
     "fuzzy": "^0.1.3",
-    "moment": "^2.19.2",
+    "moment": "^2.19.3",
     "node-opus": "^0.2.7",
     "node-schedule": "^1.2.4",
     "pg": "^7.4.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
-    "sequelize": "^4.22.15",
-    "snekfetch": "^3.5.8",
+    "sequelize": "^4.23.4",
+    "snekfetch": "^3.6.0",
     "web-request": "1.0.7",
     "yamdbf": "^3.0.1",
-    "yamdbf-dm-manager": "github:r-DestinyTheGame/yamdbf-dm-manager",
-    "youtube-mp3-downloader": "^0.5.1",
-    "ytdl-core": "^0.18.3"
+    "yamdbf-dm-manager": "github:r-DestinyTheGame/yamdbf-dm-manager"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.4",
+    "@types/cheerio": "^0.22.6",
     "@types/node": "^8.0.53",
     "@types/node-schedule": "^1.2.1",
     "@types/request": "^2.0.8",
@@ -55,6 +52,6 @@
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
     "tslint": "^5.8.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.6.2"
   }
 }
