@@ -7,6 +7,7 @@ import NotesModel from '../models/Notes';
 import BanModel from '../models/Ban';
 import UsersModel from '../models/Users';
 import StatsModel from '../models/Statistics';
+import MsgDataModel from '../models/MsgData';
 
 export class MuteCommands extends Command {
 	public constructor(connection: any) {
@@ -152,6 +153,18 @@ export class StatsCommands extends Command {
 
 	public add(serverID: string, totalUsers: number, concurrentUsers: number, totalVoiceUsers: number): Promise<void> {
 		return this.model.create({ serverID, totalUsers, concurrentUsers, totalVoiceUsers });
+	}
+
+}
+
+export class MsgDataCommands extends Command {
+	public constructor(connection: any) {
+		super();
+		this.model = new MsgDataModel(connection).get();
+	}
+
+	public add(serverid: string, userid: string, channelid: string, channelname: string, messageid: string, msgcreated: any): Promise<void> {
+		return this.model.create({ serverid, userid, channelid, channelname, messageid, msgcreated });
 	}
 
 }

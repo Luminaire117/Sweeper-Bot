@@ -7,6 +7,7 @@ import * as moment from 'moment';
 
 const config: any = require('../../../config.json');
 const { on, registerListeners } = ListenerUtil;
+const fetch = require('snekfetch');
 
 export class Events {
 	private _client: SweeperClient;
@@ -376,6 +377,8 @@ export class Events {
 	@on('message')
 	private async onMessage(message: Message): Promise<void>
 	{
+		// Log message data
+		this._client.mod.actions.logMessage(message);
 
 		// dm, group, text, voice
 		if (message.channel.type !== 'text') return;

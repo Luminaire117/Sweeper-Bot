@@ -1,4 +1,4 @@
-import { GuildMember, Guild, RichEmbed, Role, User, TextChannel } from 'discord.js';
+import { GuildMember, Guild, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import { GuildStorage, Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
 import Constants from '../../Constants';
@@ -263,6 +263,25 @@ export class Actions
 				// Known error with PG version: https://github.com/sequelize/sequelize/issues/8043
 				// "TypeError: Cannot read property '0' of undefined"
 				// this.logger.error('Users', `Error setting userPart. Known error. Error: ${error}`);
+			});
+	}
+
+	// Log Message events
+	public async logMessage(message: Message): Promise<any>
+	{
+		const serverid: string = message.guild.id;
+		const userid: string = message.member.user.id;
+		const channelid: string = message.channel.id;
+		const channelname: string = message.channel instanceof TextChannel ? message.channel.name : '';
+		const messageid: string = message.id;
+		const msgcreated: any = moment(message.createdAt).utc();
+
+		return this._client.database.commands.msgData.add(serverid, userid, channelid, channelname, messageid, msgcreated)
+			.then(result => {
+				return;
+			})
+			.catch(error => {
+				this.logger.error('logMessage', `Error logging the Message Data to the DB. Error: ${error}`);
 			});
 	}
 }
