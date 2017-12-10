@@ -29,6 +29,11 @@ export default class UsersModel extends Model {
 				type: Sequelize.DATE,
 				field: 'SvrPartDate',
 				allowNull: true
+			},
+			isMod: {
+				type: Sequelize.BOOLEAN,
+				field: 'is_mod',
+				allowNull: true
 			}
 		}, 'Users', connection);
 	}

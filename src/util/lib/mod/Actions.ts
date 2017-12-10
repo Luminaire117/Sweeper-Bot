@@ -18,18 +18,42 @@ export class Actions
 
 	// Mute Actions
 	// Mute a user in a guild
-	public async mute(gmUser: GuildMember, issuer: User, guild: Guild, actionlength: string, note: string, muteTimeMS: number): Promise<void>
+	public async mute(gmUser: GuildMember, issuer: User, guild: Guild, actionlength: string, note: string, muteTimeMS: number, actionMsg: Message): Promise<void>
 	{
 		const storage: GuildStorage = this._client.storage.guilds.get(guild.id);
 
 		// Add the muted role and set mute timer
 		await gmUser.setRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
 			.then(result => {
+				if (actionMsg.channel.id === Constants.modChannelId) {
+					actionMsg.edit(
+						`Initiating action. Please wait. Task List:\n\n` +
+						`Set muted role: :white_check_mark:\n` +
+						`Set mute duration: \n` +
+						`Log to Database: \n` +
+						`Inform User: `);
+				}
 				this.logger.log('Actions', `Mute - Added mute role to '${gmUser.user.tag}' in '${guild.name}.`);
 				this.setMuteDuration(gmUser, guild, muteTimeMS)
 					.then(res => {
+						if (actionMsg.channel.id === Constants.modChannelId) {
+							actionMsg.edit(
+								`Initiating action. Please wait. Task List:\n\n` +
+								`Set muted role: :white_check_mark:\n` +
+								`Set mute duration: :white_check_mark:\n` +
+								`Log to Database: \n` +
+								`Inform User: `);
+						}
 						this._client.database.commands.mute.addMute(guild.id, issuer.id, gmUser.id, actionlength, note)
 							.then(r => {
+								if (actionMsg.channel.id === Constants.modChannelId) {
+									actionMsg.edit(
+										`Initiating action. Please wait. Task List:\n\n` +
+										`Set muted role: :white_check_mark:\n` +
+										`Set mute duration: :white_check_mark:\n` +
+										`Log to Database: :white_check_mark:\n` +
+										`Inform User: `);
+								}
 								this.logger.log('Actions', `Mute - Logged mute to DB '${gmUser.user.tag}' in '${guild.name}.`);
 								const logChannel: TextChannel = <TextChannel> guild.channels.get(Constants.logChannelId);
 								const embed: RichEmbed = new RichEmbed()
@@ -186,7 +210,6 @@ export class Actions
 				// Set header info like the users name and ID along with the separater for the History Records
 				// When all done, will look like this: https://i.imgur.com/yuodYuO.png
 				embed.setAuthor(`Member: ${user.tag} (${user.id})`, user.avatarURL);
-				embed.addField(`--------------`, `__**History Record:**__`, false);
 
 				// Add the History data
 				if (!results.length) {
@@ -195,7 +218,7 @@ export class Actions
 					results.forEach((value: any, index: number) => {
 						let noteDate: string = moment(value.createdAt).format('lll');
 						let noteText = value.note;
-						let length = 148;
+						let length = 750;
 						let trimmedNote = noteText.length > length ?
 											noteText.substring(0, length - 3) + '...' :
 											noteText;
@@ -204,13 +227,10 @@ export class Actions
 					});
 				}
 
-				// Set the footer spacer. Since the field can't be blank using spacer emoji.
-				embed.addField(`--------------`, `${Constants.spacerEmoji}`, false);
-
 				// Add the final ending field with the history count
 				return this.getHistoryCount(user, guild)
 					.then(function(result) {
-						embed.addField('This user has: ', result);
+						embed.setFooter(`This user has: ${result}`);
 						return embed;
 					})
 					.catch(error => {
@@ -266,22 +286,38 @@ export class Actions
 			});
 	}
 
-	// Log Message events
-	public async logMessage(message: Message): Promise<any>
+	// Update Mod Status
+	public async setModStatus(gmUser: GuildMember, isMod: boolean = false): Promise<any>
 	{
-		const serverid: string = message.guild.id;
-		const userid: string = message.member.user.id;
-		const channelid: string = message.channel.id;
-		const channelname: string = message.channel instanceof TextChannel ? message.channel.name : '';
-		const messageid: string = message.id;
-		const msgcreated: any = moment(message.createdAt).utc();
-
-		return this._client.database.commands.msgData.add(serverid, userid, channelid, channelname, messageid, msgcreated)
-			.then(result => {
+		return this._client.database.commands.users.setModStatus(gmUser.user.id, gmUser.guild.id, isMod)
+			.then(function(result) {
 				return;
 			})
 			.catch(error => {
-				this.logger.error('logMessage', `Error logging the Message Data to the DB. Error: ${error}`);
+				console.error(error);
 			});
+	}
+
+	// Log Message events
+	public async logMessage(message: Message): Promise<void>
+	{
+		try {
+			const serverid: string = message.guild.id;
+			const userid: string = message.member.user.id;
+			const channelid: string = message.channel.id;
+			const channelname: string = message.channel instanceof TextChannel ? message.channel.name : '';
+			const messageid: string = message.id;
+			const msgcreated: any = moment(message.createdAt).utc();
+
+			return this._client.database.commands.msgData.add(serverid, userid, channelid, channelname, messageid, msgcreated)
+				.then(result => {
+					return;
+				})
+				.catch(error => {
+					this.logger.error('Actions:logMessage', `Error logging the Message Data to the DB. Error: ${error}`);
+				});
+		} catch (err) {
+			this.logger.error('Actions:logMessage', `General Error: ${err}`);
+		}
 	}
 }

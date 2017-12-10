@@ -88,9 +88,8 @@ export class SweeperClient extends Client {
 		if (!testing) { this.loadMessages(); }
 		await this.setStatus(config.status);
 
-		process.on('unhandledRejection', (reason, p) => {
-			console.error('Unhandled Rejection at: Promise', p, 'reason:', reason.stack);
-			// application specific logging, throwing an error, or other logic here
+		process.on('unhandledRejection', (reason, promise) => {
+			this.logger.error('PromiseRejection', `Promise: ${promise} \n\n Reason: ${reason.stack}`);
 		});
 	}
 

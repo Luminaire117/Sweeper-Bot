@@ -17,6 +17,7 @@ export type BotConstants = {
 	voiceCategoryOpenId: string;
 	voiceCategoryInUseId: string;
 	musicVoiceChannelId: string;
+	moderatorRoleId: string;
 
 	// API Data
 	vendorEngramsAPIBase: string;
@@ -84,6 +85,7 @@ Constants.antispamBypassId = config.ServerData.antispamBypassId;
 Constants.voiceCategoryOpenId = config.ServerData.voiceCategoryOpenId;
 Constants.voiceCategoryInUseId = config.ServerData.voiceCategoryInUseId;
 Constants.musicVoiceChannelId = config.ServerData.musicVoiceChannelId;
+Constants.moderatorRoleId = config.ServerData.moderatorRoleId;
 
 // API Data
 Constants.vendorEngramsAPIBase = 'https://api.vendorengrams.xyz/getVendorDrops?key=';

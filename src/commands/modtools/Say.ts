@@ -12,8 +12,8 @@ export default class Mute extends Command<SweeperClient> {
 	public constructor() {
 		super({
 			name: 'say',
-			desc: 'Send a message as the bot in same channel.',
-			usage: '<prefix>say <Message>?',
+			desc: 'Send a message as the bot the specified channel.',
+			usage: '<prefix>say <ChannelID> <Message>?',
 			group: 'modtools',
 			guildOnly: true,
 			callerPermissions: ['MANAGE_GUILD']
@@ -22,7 +22,12 @@ export default class Mute extends Command<SweeperClient> {
 
 	public async action(message: Message, args: Array<any>): Promise<any> {
 
+		let channel: TextChannel;
 		if (args[0]) {
+			channel = <TextChannel> await this.client.channels.get(args[0]);
+		}
+
+		if (args[1]) {
 			// Set note info
 			let messageData: string = '';
 			messageData = this.parseNote(args);
@@ -31,8 +36,10 @@ export default class Mute extends Command<SweeperClient> {
 			}
 
 			try {
-				message.channel.send(`${messageData}`);
-				message.delete();
+				if (channel) {
+					channel.send(`${messageData}`);
+					message.delete();
+				}
 			} catch (err) {
 				const modChannel: TextChannel = <TextChannel> message.guild.channels.get(Constants.modChannelId);
 				modChannel.send(`There was an error using the **say** command.\n\n**Error:**\n${err}`);
@@ -47,7 +54,7 @@ export default class Mute extends Command<SweeperClient> {
 
 	private parseNote(args: Array<any>): string {
 		let text: string = '';
-		for (let index: number = 0; index < args.length; index++) {
+		for (let index: number = 1; index < args.length; index++) {
 			text += `${args[index].trim()} `;
 		}
 		return text.slice(0, -1);

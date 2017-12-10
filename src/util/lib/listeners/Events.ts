@@ -19,6 +19,15 @@ export class Events {
 		registerListeners(this._client, this);
 	}
 
+	@on('guildMemberUpdate')
+	private async _onGuildMemberUpdate(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
+		if (oldMember.roles.exists('id', Constants.moderatorRoleId) && !newMember.roles.exists('id', Constants.moderatorRoleId)) {
+			this._client.mod.actions.setModStatus(newMember, false);
+		} else if (!oldMember.roles.exists('id', Constants.moderatorRoleId) && newMember.roles.exists('id', Constants.moderatorRoleId)) {
+			this._client.mod.actions.setModStatus(newMember, true);
+		}
+	}
+
 	@on('voiceStateUpdate')
 	private async _onVoiceStateUpdate(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
 		let oldUserChannel = oldMember.voiceChannel;
@@ -447,7 +456,7 @@ export class Events {
 										`\n\n` +
 										`Please note the following planned Destiny maintenance event(s).` +
 										`\n\n` +
-										`__**FTuesday, December 5, 2017 [2017-12-05]**__\n` +
+										`__**Tuesday, December 5, 2017 [2017-12-05]**__\n` +
 										`**STARTS:** 7 AM PST (1500 UTC) \n` +
 										`**ENDS:** 10 AM PST (1800 UTC) \n` +
 										`\n\n` +

@@ -107,7 +107,7 @@ export class BanCommands extends Command {
 
 	// History Section
 	// Get latest history data
-	public getHistory(serverid: string, userid: string, limit: number = 5): Promise<any> {
+	public getHistory(serverid: string, userid: string, limit: number = 25): Promise<any> {
 		return this.model.findAll({
 			order: [[sequelize.col('id'), 'DESC']],
 			where: { serverid, userid },
@@ -136,12 +136,16 @@ export class UsersCommands extends Command {
 		this.model = new UsersModel(connection).get();
 	}
 
-	public userJoin(userID: string, userName: string, serverID: string, svrJoinDate: Date): Promise<void> {
-		return this.model.upsert({ userID, userName, serverID, svrJoinDate });
+	public userJoin(userID: string, userName: string, serverID: string, svrJoinDate: Date): Promise<any> {
+		return this.model.upsert({ userID, userName, serverID, svrJoinDate }).then(() => {});
 	}
 
-	public userPart(userID: string, userName: string, serverID: string, svrPartDate: Date): Promise<void> {
-		return this.model.upsert({ userID, userName, serverID, svrPartDate });
+	public userPart(userID: string, userName: string, serverID: string, svrPartDate: Date): Promise<any> {
+		return this.model.upsert({ userID, userName, serverID, svrPartDate }).then(() => {});
+	}
+
+	public setModStatus(userID: string, serverID: string, isMod: boolean): Promise<any> {
+		return this.model.update({ isMod: isMod }, { where: { serverID: serverID, userID: userID } }).then(() => {});
 	}
 }
 

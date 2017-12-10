@@ -35,7 +35,7 @@ export class Helpers
 		const regexInviteCode: string = Constants.discordInviteCodeRegExp.exec(regexMatch)[1];
 		let discordInvites: Collection<string, Invite> = await message.guild.fetchInvites().then(invites => invites);
 
-		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId)) return;
+		if (message.member.user.bot || message.member.hasPermission('MANAGE_MESSAGES') || message.member.roles.exists('id', Constants.antispamBypassId) || message.content.includes('blog.discordapp.com')) return;
 		if (regexInviteCode && discordInvites) {
 			let inviteCodes = discordInvites.map(invite => invite.code);
 			if (inviteCodes.includes(regexInviteCode))

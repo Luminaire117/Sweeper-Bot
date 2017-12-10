@@ -4,6 +4,7 @@
 	"name": "Sweeper Bot",
 	"version": "0.1.0",
 	"status": "Try .help | DMing me DMs the mods",
+	"debug": false,
 	"ServerData": {
 		"assignmentChannelId": "Channel ID",
 		"serverId": "Server ID",
@@ -17,7 +18,8 @@
 		"antispamBypassId": "Role ID",
 		"voiceCategoryOpenId": "Category ID",
 		"voiceCategoryInUseId": "Category ID",
-		"musicVoiceChannelId": "Channel ID"
+		"musicVoiceChannelId": "Channel ID",
+		"moderatorRoleId": "Role ID"
 	},
 	"APIKeys": {
 		"VendorEngramsXYZ": "Get Key From vendorengrams.xyz",

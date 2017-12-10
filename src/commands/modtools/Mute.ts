@@ -123,9 +123,18 @@ export default class Mute extends Command<SweeperClient> {
 				return message.delete();
 			}
 			// If message sent in the mod channel, then give full details, otherwise be vague
-			const actionMsg: Message = <Message> await message.channel.send(`Initiating action, please wait.`);
-
-			await this.client.mod.actions.mute(mutedUser, issuer, message.guild, muteTimeHUMN, note, muteTimeMS)
+			let actionMsg: Message;
+			if (message.channel.id === Constants.modChannelId) {
+				actionMsg = <Message> await message.channel.send(`Initiating action. Please wait. Task List:\n\n` +
+					`Set muted role: \n` +
+					`Set mute duration: \n` +
+					`Log to Database: \n` +
+					`Inform User: `);
+			} else {
+				actionMsg = <Message> await message.channel.send(`Initiating action. Please wait.`);
+			}
+			this.logger.log('CMD Mute', `Initiating mute for user: '${mutedUser.user.tag}' in '${message.guild.name}'`);
+			await this.client.mod.actions.mute(mutedUser, issuer, message.guild, muteTimeHUMN, note, muteTimeMS, actionMsg)
 				.then(result => {
 					this.logger.log('CMD Mute', `Muted user: '${mutedUser.user.tag}' in '${message.guild.name}'`);
 					try {
@@ -134,8 +143,14 @@ export default class Mute extends Command<SweeperClient> {
 										`"${note}"${Constants.footerGeneral}`)
 							.then(res => {
 								this.logger.log('CMD Mute', `Informed user of their mute: '${mutedUser.user.tag}' in '${message.guild.name}'`);
-								if (message.channel.id === Constants.modChannelId) {
-									actionMsg.edit(`Mute successful for: <@!${user.id}>. **Time:** *${muteTimeHUMN}*. ${Constants.sweeperbot}`);
+								if (actionMsg.channel.id === Constants.modChannelId) {
+									actionMsg.edit(
+										`Initiating action. Please wait. Task List:\n\n` +
+										`Set muted role: :white_check_mark:\n` +
+										`Set mute duration: :white_check_mark:\n` +
+										`Log to Database: :white_check_mark:\n` +
+										`Inform User: :white_check_mark:\n\n` +
+										`Mute successful for: <@!${user.id}>. **Time:** *${muteTimeHUMN}*. ${Constants.sweeperbot}`);
 								} else {
 									actionMsg.edit(`That action was successful. ${Constants.sweeperbot}`);
 									message.delete();
