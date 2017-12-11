@@ -3,6 +3,7 @@ import { TextChannel, RichEmbed, Message, Guild, GuildMember, VoiceChannel } fro
 import { Events } from './listeners/Events';
 import { RoleManager } from './assignment/RoleManager';
 import { VendorEngramManager } from './helpers/VendorEngrams';
+import { WeeklyResetManager } from './helpers/WeeklyReset';
 import { ModLoader } from '../lib/mod/ModLoader';
 import VoiceChannelManager from './voice/VoiceChannelManager';
 import Database from '../../database/Database';
@@ -27,6 +28,7 @@ export class SweeperClient extends Client {
 	public mod: ModLoader;
 	public voiceChannelManager: VoiceChannelManager;
 	public vendorEngramManager: VendorEngramManager;
+	public weeklyResetManager: WeeklyResetManager;
 	public music: any;
 
 	// constructor
@@ -64,6 +66,7 @@ export class SweeperClient extends Client {
 		this.mod = new ModLoader(this);
 		this.voiceChannelManager = new VoiceChannelManager(this);
 		this.vendorEngramManager = new VendorEngramManager(this);
+		this.weeklyResetManager = new WeeklyResetManager(this);
 	}
 
 	@once('pause')
@@ -84,6 +87,8 @@ export class SweeperClient extends Client {
 		this.logger.info('CORE', `Connected to: VoiceChannelManager`);
 		await this.vendorEngramManager.init();
 		this.logger.info('CORE', `Connected to: VendorEngramManager`);
+		await this.weeklyResetManager.init();
+		this.logger.info('CORE', `Connected to WeeklyResetManager`);
 		if (Constants.youtubeAPIKey && Constants.musicVoiceChannelId) { this.loadMusic(); }
 		if (!testing) { this.loadMessages(); }
 		await this.setStatus(config.status);

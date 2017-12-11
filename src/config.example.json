@@ -12,6 +12,7 @@
 		"logChannelId": "Channel ID",
 		"botDMServerId": "Separate Server ID",
 		"destiny2ChanId": "Channel ID",
+		"destiny2BungieAnnouncements": "Channel ID",
 		"baseVoiceChannelIdOne": "Channel ID",
 		"baseVoiceChannelIdTwo": "Channel ID",
 		"baseVoiceChannelIdThree": "Channel ID",
@@ -23,6 +24,7 @@
 	},
 	"APIKeys": {
 		"VendorEngramsXYZ": "Get Key From vendorengrams.xyz",
-		"YouTube": "Get From YouTube v3"
+		"YouTube": "Get From YouTube v3",
+		"theTraveler": "get key from bungie's API"
 	}
 }

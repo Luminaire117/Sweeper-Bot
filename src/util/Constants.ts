@@ -9,6 +9,7 @@ export type BotConstants = {
 	logChannelId: string;
 	botDMServerId: string;
 	destiny2ChanId: string;
+	destiny2BungieAnnouncements: string;
 	baseVoiceChannelIdOne: string;
 	baseVoiceChannelIdTwo: string;
 	baseVoiceChannelIdThree: string;
@@ -24,6 +25,7 @@ export type BotConstants = {
 	vendorEngramsAPIKey: string;
 	vendorEngramsVendors: any;
 	youtubeAPIKey: string;
+	destinyAPIKey: string;
 
 	// RegExp
 	platformRegExp: RegExp;
@@ -63,6 +65,9 @@ export type BotConstants = {
 	channelNames: Array<string>;
 	footer: string;
 	footerGeneral: string;
+
+	raidOrder: any;
+	flashpoint: Object;
 };
 
 // tslint:disable-next-line:variable-name
@@ -75,6 +80,7 @@ Constants.modChannelId = config.ServerData.modChannelId;
 Constants.logChannelId = config.ServerData.logChannelId;
 Constants.botDMServerId = config.ServerData.botDMServerId;
 Constants.destiny2ChanId = config.ServerData.destiny2ChanId;
+Constants.destiny2BungieAnnouncements = config.ServerData.destiny2BungieAnnouncements;
 Constants.baseVoiceChannelIdOne = config.ServerData.baseVoiceChannelIdOne;
 Constants.baseVoiceChannelIdTwo = config.ServerData.baseVoiceChannelIdTwo;
 Constants.baseVoiceChannelIdThree = config.ServerData.baseVoiceChannelIdThree;
@@ -92,6 +98,7 @@ Constants.vendorEngramsAPIBase = 'https://api.vendorengrams.xyz/getVendorDrops?k
 Constants.vendorEngramsAPIKey = config.APIKeys.VendorEngramsXYZ;
 Constants.vendorEngramsVendors = vendors;
 Constants.youtubeAPIKey = config.APIKeys.YouTube;
+Constants.destinyAPIKey = config.APIKeys.theTraveler;
 
 // RegExp
 Constants.platformRegExp = new RegExp('(\\bpc\\b)|(\\bpsn\\b)|(\\bps\\b)|(\\bxbl\\b)|(\\bxb\\b)|(\\bxbox\\b)', 'i');
@@ -167,4 +174,28 @@ Constants.channelNames = ['Abyss', 'Acolyte', 'Adjuticator', 'Adonna', 'Agah', '
 
 Constants.footer = `\n\n**Special Note:** If you reply to this message it will be sent to the moderator team. If you are unable to reply to the bot, please check that you have not blocked the bot, disabled server messages, and share a server with the bot. If you do not share a server with the bot, you may join this one: ${Constants.appealsServer}.`;
 Constants.footerGeneral = `\n\n**Special Note:** If you reply to this message it will be sent to the moderator team.`;
+
+Constants.raidOrder = {
+  "2693136600": ["Baths", "Gauntlet", "Dogs"],
+  "2693136601": ["Baths", "Dogs", "Gauntlet"],
+  "2693136602": [""],
+  "2693136603": ["Dogs", "Baths", "Gauntlet"],
+  "2693136604": ["Gauntlet", "Baths", "Dogs"],
+  "2693136605": [""],
+  "2449714930": ["Baths", "Gauntlet", "Dogs"],
+  "3446541099": ["Dogs", "Baths", "Gauntlet"],
+  "3879860661": ["Baths", "Dogs", "Gauntlet"],
+  "417231112": ["Dogs", "Gauntlet", "Baths"],
+  "757116822": ["Gauntlet", "Baths", "Dogs"],
+  "1685065161": ["Gauntlet", "Dogs", "Baths"]
+};
+
+Constants.flashpoint = {
+	"1111180031": "Titan",
+	"1881837031": "Nessus",
+	"2144675440": "EDZ",
+	"2878046419": "Io",
+	"3786778617": "Mercury"
+}
+
 export default Constants;
