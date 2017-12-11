@@ -12,20 +12,19 @@ const { on, registerListeners } = ListenerUtil;
 
 export class WeeklyResetManager {
 	private client: SweeperClient;
-
 	public constructor(client: SweeperClient) {
 		this.client = client;
 		registerListeners(this.client, this);
 	}
 
   public async init(): Promise<void> {
-		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.destiny2BungieAnnouncements);
+		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.bungieAnnouncements);
 
 		if (channel) {
 			try {
 				let _this: WeeklyResetManager = this;
 
-				await Schedule.scheduleJob('* * * * *', async function() {
+				await Schedule.scheduleJob('5 12 * * 2', async function() {
 					await _this.weeklyReset(channel);
 				});
 
@@ -33,12 +32,11 @@ export class WeeklyResetManager {
 			catch (err) { console.log(`Could not schedule Weekly Reset cron job`); }
 		}
 		else
-			console.log(`Could not locate channel.`);
+			console.log(`Could not locate channel to send weekly reset message.`);
 
 	}
 
 	public async weeklyReset(channel: TextChannel): Promise<void> {
-		console.log("THIS RAN");
 		try {
 			const traveler = new Traveler({
 	      apikey: Constants.destinyAPIKey,
@@ -111,25 +109,26 @@ export class WeeklyResetManager {
 	    var flashpointPlanet = Constants.flashpoint[flashpointHash];
 
 	    let now = moment().format('LL');
-			channel.send(`**Weekly Reset:** ${now}
-	      __**${nfName}**__ - ${nfDescription}
-	      __Modifiers:__
-	      **${modifierNames[0]}**- ${modifierDescriptions[0]}
-	      **${modifierNames[1]}** - ${modifierDescriptions[1]}
+			channel.send(`**Weekly Reset: ${now}**\n\n`
+	      + `${Constants.tricornEmoji}__**${nfName}**__ - ${nfDescription}\n`
+	      + `__Modifiers:__\n`
+	      + `**${modifierNames[0]}**- ${modifierDescriptions[0]}\n`
+	      + `**${modifierNames[1]}** - ${modifierDescriptions[1]}\n\n`
 
-	      __**Leviathan Raid - Encounter rotation order:**__
-	      -${order[0]}
-	      -${order[1]}
-	      -${order[2]}
-	      -Calus
+	      + `${Constants.raidEmoji}__**Leviathan Raid - Encounter rotation order:**__\n`
+	      + `-${order[0]}\n`
+	      + `-${order[1]}\n`
+	      + `-${order[2]}\n`
+	      + `-Calus\n\n`
 
-	      __**Flashpoint:**__ ${flashpointPlanet}
-	      *Don't forget to buy the Treasure Maps from Cayde-6 as well.*
+	      + `${Constants.tricornEmoji}__**Flashpoint:**__ ${flashpointPlanet}\n`
+	      + `*Don't forget to buy the Treasure Maps from Cayde-6 as well.*\n\n`
 
-	      __**Meditations:**__
-	      -${meditationNames.join("\n      -")}`
+	      + `${Constants.tricornEmoji}__**Meditations:**__\n`
+	      + `-${meditationNames.join("\n-")}`
 	    );
 			}
+			return;
 		} catch (err) { return; }
 	}
 }

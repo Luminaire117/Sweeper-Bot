@@ -9,7 +9,7 @@ export type BotConstants = {
 	logChannelId: string;
 	botDMServerId: string;
 	destiny2ChanId: string;
-	destiny2BungieAnnouncements: string;
+	bungieAnnouncements: string;
 	baseVoiceChannelIdOne: string;
 	baseVoiceChannelIdTwo: string;
 	baseVoiceChannelIdThree: string;
@@ -58,6 +58,9 @@ export type BotConstants = {
 	DOEmoji: string;
 	FWCEmoji: string;
 	NMEmoji: string;
+	// Tricorn and Raid
+	tricornEmoji: string;
+	raidEmoji: string;
 
 	serverInvite: string;
 	appealsServer: string;
@@ -80,7 +83,7 @@ Constants.modChannelId = config.ServerData.modChannelId;
 Constants.logChannelId = config.ServerData.logChannelId;
 Constants.botDMServerId = config.ServerData.botDMServerId;
 Constants.destiny2ChanId = config.ServerData.destiny2ChanId;
-Constants.destiny2BungieAnnouncements = config.ServerData.destiny2BungieAnnouncements;
+Constants.bungieAnnouncements = config.ServerData.bungieAnnouncements;
 Constants.baseVoiceChannelIdOne = config.ServerData.baseVoiceChannelIdOne;
 Constants.baseVoiceChannelIdTwo = config.ServerData.baseVoiceChannelIdTwo;
 Constants.baseVoiceChannelIdThree = config.ServerData.baseVoiceChannelIdThree;
@@ -98,7 +101,7 @@ Constants.vendorEngramsAPIBase = 'https://api.vendorengrams.xyz/getVendorDrops?k
 Constants.vendorEngramsAPIKey = config.APIKeys.VendorEngramsXYZ;
 Constants.vendorEngramsVendors = vendors;
 Constants.youtubeAPIKey = config.APIKeys.YouTube;
-Constants.destinyAPIKey = config.APIKeys.theTraveler;
+Constants.destinyAPIKey = config.APIKeys.destinyAPIKey;
 
 // RegExp
 Constants.platformRegExp = new RegExp('(\\bpc\\b)|(\\bpsn\\b)|(\\bps\\b)|(\\bxbl\\b)|(\\bxb\\b)|(\\bxbox\\b)', 'i');
@@ -130,6 +133,9 @@ Constants.D2Emoji = '<:D2:336634217712582656>';
 Constants.DOEmoji = '<:do:247889245333618688>';
 Constants.FWCEmoji = '<:fwc:247889245337944064>';
 Constants.NMEmoji = '<:nm:247889245421699082>';
+// Tricorn and Raid emojis
+Constants.tricornEmoji = '<:Tricorn:325150901843001347>';
+Constants.raidEmoji = '<:raid:367192717585022976>';
 
 Constants.serverInvite = 'https://discord.gg/DestinyReddit';
 Constants.appealsServer = 'https://discord.gg/r9w8EfP';
