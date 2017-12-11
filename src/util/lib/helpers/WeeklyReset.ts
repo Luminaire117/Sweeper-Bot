@@ -24,7 +24,7 @@ export class WeeklyResetManager {
 			try {
 				let _this: WeeklyResetManager = this;
 
-				await Schedule.scheduleJob('5 12 * * 2', async function() {
+				await Schedule.scheduleJob('3 12 * * 2', async function() {
 					await _this.weeklyReset(channel);
 				});
 
