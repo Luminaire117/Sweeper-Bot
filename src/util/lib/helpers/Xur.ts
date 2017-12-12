@@ -26,7 +26,7 @@ export class XurResetManager {
 			try {
 				let _this: XurResetManager = this;
 
-				await Schedule.scheduleJob('5 12 * * 10', async function() {
+				await Schedule.scheduleJob('5 9 * * 10', async function() {
 					await _this.xurReset(channel);
 				});
 
