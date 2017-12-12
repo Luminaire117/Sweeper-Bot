@@ -64,7 +64,7 @@ export class WeeklyResetManager {
 				let meditationName = meditationDefinition.Response.displayProperties.name;
 				if (meditationName.includes('Meditation')) {
 					meditationName = meditationName.replace('Meditation: \'', '');
-					meditationName = meditationName.slice(0,-1);
+					meditationName = meditationName.slice(0, -1);
 				}
 				meditationNames.push(meditationName);
 			}

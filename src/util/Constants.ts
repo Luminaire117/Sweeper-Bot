@@ -202,6 +202,6 @@ Constants.flashpoint = {
 	'2144675440': 'EDZ',
 	'2878046419': 'Io',
 	'3786778617': 'Mercury'
-}
+};
 
 export default Constants;
