@@ -5,6 +5,7 @@ import { RoleManager } from './assignment/RoleManager';
 import { VendorEngramManager } from './helpers/VendorEngrams';
 import { WeeklyResetManager } from './helpers/WeeklyReset';
 import { TrialsResetManager } from './helpers/Trials';
+import { XurResetManager } from './helpers/Xur';
 import { ModLoader } from '../lib/mod/ModLoader';
 import VoiceChannelManager from './voice/VoiceChannelManager';
 import Database from '../../database/Database';
@@ -31,6 +32,7 @@ export class SweeperClient extends Client {
 	public vendorEngramManager: VendorEngramManager;
 	public weeklyResetManager: WeeklyResetManager;
 	public trialsResetManager: TrialsResetManager;
+	public xurResetManager: XurResetManager;
 	public music: any;
 
 	// constructor
@@ -70,6 +72,7 @@ export class SweeperClient extends Client {
 		this.vendorEngramManager = new VendorEngramManager(this);
 		this.weeklyResetManager = new WeeklyResetManager(this);
 		this.trialsResetManager = new TrialsResetManager(this);
+		this.xurResetManager = new XurResetManager(this);
 	}
 
 	@once('pause')
@@ -94,6 +97,8 @@ export class SweeperClient extends Client {
 		this.logger.info('CORE', `Connected to WeeklyResetManager`);
 		await this.trialsResetManager.init();
 		this.logger.info('CORE', `Connected to TrialsResetManager`);
+		await this.xurResetManager.init();
+		this.logger.info('CORE', `Connected to XurResetManager`);
 		if (Constants.youtubeAPIKey && Constants.musicVoiceChannelId) { this.loadMusic(); }
 		if (!testing) { this.loadMessages(); }
 		await this.setStatus(config.status);

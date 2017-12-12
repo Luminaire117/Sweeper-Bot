@@ -24,7 +24,7 @@ export class TrialsResetManager {
 			try {
 				let _this: TrialsResetManager = this;
 
-				await Schedule.scheduleJob('* * * * *', async function() {
+				await Schedule.scheduleJob('5 12 * * 5', async function() {
 					await _this.trials(channel);
 				});
 
