@@ -44,9 +44,6 @@ export class XurResetManager {
 			var month = (moment().month() + 1).toString();
 			var day = moment().date().toString();
 			var year = moment().year().toString();
-			month = '12';
-			day = '8';
-			year = '2017';
 			var URL = baseUrl + month + '-' + day + '-' + year;
 			request(URL, function(error, response, body) {
 				if (error !== null) {
