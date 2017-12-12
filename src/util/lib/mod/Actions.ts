@@ -23,7 +23,8 @@ export class Actions
 		const storage: GuildStorage = this._client.storage.guilds.get(guild.id);
 
 		// Add the muted role and set mute timer
-		await gmUser.setRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
+		// await gmUser.setRoles([guild.roles.get(await storage.settings.get('mutedrole'))])
+		await gmUser.setRoles(['297860529161240576'])
 			.then(result => {
 				if (actionMsg.channel.id === Constants.modChannelId) {
 					actionMsg.edit(
