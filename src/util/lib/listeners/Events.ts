@@ -456,9 +456,9 @@ export class Events {
 										`\n\n` +
 										`Please note the following planned Destiny maintenance event(s).` +
 										`\n\n` +
-										`__**Tuesday, December 5, 2017 [2017-12-05]**__\n` +
+										`__**Tuesday, December 12, 2017 [2017-12-12]**__\n` +
 										`**STARTS:** 7 AM PST (1500 UTC) \n` +
-										`**ENDS:** 10 AM PST (1800 UTC) \n` +
+										`**ENDS:** 2 PM PST (2200 UTC) \n` +
 										`\n\n` +
 										`Note: Maintenance times, including end time, are subject to change by Bungie without notice. For more info see @BungieHelp on Twitter or <https://www.bungie.net/en/Help/Article/13125> Thank you.`);
 					return;
