@@ -182,26 +182,26 @@ Constants.footer = `\n\n**Special Note:** If you reply to this message it will b
 Constants.footerGeneral = `\n\n**Special Note:** If you reply to this message it will be sent to the moderator team.`;
 
 Constants.raidOrder = {
-  "2693136600": ["Baths", "Gauntlet", "Dogs"],
-  "2693136601": ["Baths", "Dogs", "Gauntlet"],
-  "2693136602": [""],
-  "2693136603": ["Dogs", "Baths", "Gauntlet"],
-  "2693136604": ["Gauntlet", "Baths", "Dogs"],
-  "2693136605": [""],
-  "2449714930": ["Baths", "Gauntlet", "Dogs"],
-  "3446541099": ["Dogs", "Baths", "Gauntlet"],
-  "3879860661": ["Baths", "Dogs", "Gauntlet"],
-  "417231112": ["Dogs", "Gauntlet", "Baths"],
-  "757116822": ["Gauntlet", "Baths", "Dogs"],
-  "1685065161": ["Gauntlet", "Dogs", "Baths"]
+	'2693136600': ['Baths', 'Gauntlet', 'Dogs'],
+	'2693136601': ['Baths', 'Dogs', 'Gauntlet'],
+	'2693136602': [''],
+	'2693136603': ['Dogs', 'Baths', 'Gauntlet'],
+	'2693136604': ['Gauntlet', 'Baths', 'Dogs'],
+	'2693136605': [''],
+	'2449714930': ['Baths', 'Gauntlet', 'Dogs'],
+	'3446541099': ['Dogs', 'Baths', 'Gauntlet'],
+	'3879860661': ['Baths', 'Dogs', 'Gauntlet'],
+	'417231112': ['Dogs', 'Gauntlet', 'Baths'],
+	'757116822': ['Gauntlet', 'Baths', 'Dogs'],
+	'1685065161': ['Gauntlet', 'Dogs', 'Baths']
 };
 
 Constants.flashpoint = {
-	"1111180031": "Titan",
-	"1881837031": "Nessus",
-	"2144675440": "EDZ",
-	"2878046419": "Io",
-	"3786778617": "Mercury"
+	'1111180031': 'Titan',
+	'1881837031': 'Nessus',
+	'2144675440': 'EDZ',
+	'2878046419': 'Io',
+	'3786778617': 'Mercury'
 }
 
 export default Constants;
