@@ -37,6 +37,7 @@ export class WeeklyResetManager {
 	}
 
 	public async weeklyReset(channel: TextChannel): Promise<void> {
+		const modChannel: TextChannel = <TextChannel> this.client.channels.get(Constants.modChannelId);
 		try {
 			const traveler = new Traveler({
 				apikey: Constants.destinyAPIKey,
@@ -46,6 +47,7 @@ export class WeeklyResetManager {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
+				modChannel.send('Bungie\'s API is currently unavailable and the automatic weekly reset was unable to be posted. Please run .weekly once servers are back up to post reset info.');
 				console.log(`getPublicMilestones error ${e}`);
 			}
 			var data = res.Response;

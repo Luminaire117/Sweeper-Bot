@@ -187,7 +187,7 @@ Constants.footerGeneral = `\n\n**Special Note:** If you reply to this message it
 Constants.raidOrder = {
 	'2693136600': ['Baths', 'Gauntlet', 'Dogs'],
 	'2693136601': ['Baths', 'Dogs', 'Gauntlet'],
-	'2693136602': [''],
+	'2693136602': ['Dogs', 'Gauntlet', 'Baths'],
 	'2693136603': ['Dogs', 'Baths', 'Gauntlet'],
 	'2693136604': ['Gauntlet', 'Baths', 'Dogs'],
 	'2693136605': [''],

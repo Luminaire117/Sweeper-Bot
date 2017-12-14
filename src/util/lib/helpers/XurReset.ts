@@ -26,7 +26,7 @@ export class XurResetManager {
 			try {
 				let _this: XurResetManager = this;
 
-				await Schedule.scheduleJob('5 9 * * 10', async function() {
+				await Schedule.scheduleJob('10 9 * * 5', async function() {
 					await _this.xurReset(channel);
 				});
 
@@ -39,20 +39,22 @@ export class XurResetManager {
 	}
 
 	public async xurReset(channel: TextChannel): Promise<void> {
+		const modChannel: TextChannel = <TextChannel> this.client.channels.get(Constants.modChannelId);
 		try {
 			var baseUrl = 'https://whereisxur.com/xur-location-destiny-';
-			var month = (moment().month() + 1).toString();
-			var day = moment().date().toString();
-			var year = moment().year().toString();
+			var month = (moment().day(moment().day() >= 5 ? 5 : -2).month() + 1).toString();
+			var day = moment().day(moment().day() >= 5 ? 5 : -2).date().toString();
+			var year = moment().day(moment().day() >= 5 ? 5 : -2).year().toString();
 			var URL = baseUrl + month + '-' + day + '-' + year;
 			request(URL, function(error, response, body) {
 				if (error !== null) {
 					console.log('xur request error:', error);
+					return modChannel.send('Xur\'s API is currently unavailable and the automatic xur post wasn\'t able to run. Please run .xur once servers are back up to post info.');
 				}
 				const $ = cheerio.load(body);
 				var location = $('h4[class=title]').text().slice(0, -4);
 				var itemRow = $('.et_pb_row_5');
-				var xurItems = [];
+				var xurItems: Array<string> = [];
 				itemRow.children().find('h4').each(function(i, elem) {
 					xurItems[i] = $(this).text();
 				});

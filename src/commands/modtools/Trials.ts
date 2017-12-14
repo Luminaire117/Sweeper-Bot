@@ -1,42 +1,26 @@
-import { Collection, Guild, Message, RichEmbed, TextChannel } from 'discord.js';
-import { GuildStorage, ListenerUtil } from 'yamdbf';
-import { SweeperClient } from '../SweeperClient';
-import * as Schedule from 'node-schedule';
-import * as WebRequest from 'web-request';
-import Constants from '../../Constants';
+import { Command } from 'yamdbf';
+import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
+import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';
 import { ComponentType } from 'the-traveler/build/enums';
 import * as moment from 'moment';
+const config: any = require('../../config.json');
 
-const { on, registerListeners } = ListenerUtil;
-
-export class TrialsResetManager {
-	private client: SweeperClient;
-	public constructor(client: SweeperClient) {
-		this.client = client;
-		registerListeners(this.client, this);
+export default class Trials extends Command {
+	public constructor() {
+		super({
+			name: 'trials',
+			desc: 'Posts weekly trials info from Bungie API.',
+			usage: '<prefix>trials',
+			group: 'modtools',
+			guildOnly: true,
+			callerPermissions: ['MANAGE_MESSAGES']
+		});
 	}
 
-	public async init(): Promise<void> {
+	public async action(message: Message, args: string[]): Promise<any> {
+
 		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.bungieAnnouncements);
-
-		if (channel) {
-			try {
-				let _this: TrialsResetManager = this;
-
-				await Schedule.scheduleJob('5 9 * * 5', async function() {
-					await _this.trials(channel);
-				});
-
-			}
-			catch (err) { console.log(`Could not schedule Weekly Reset cron job`); }
-		}
-		else
-			console.log(`Could not locate channel to send trials message.`);
-
-	}
-
-	public async trials(channel: TextChannel): Promise<void> {
 		try {
 			const traveler = new Traveler({
 				apikey: Constants.destinyAPIKey,
@@ -47,9 +31,14 @@ export class TrialsResetManager {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
 				console.log(`getPublicMilestones error ${e}`);
+				return message.reply('Bungie\'s API is currently unavailable, please try again later.');
+
 			}
 			var data = res.Response;
 			// get hash for trials
+			if (!('3551755444' in data)) {
+				return message.reply('Trials is not currently active, please try again on Friday after 9AM Pacific.');
+			}
 			var trialsHash = data['3551755444']['availableQuests'][0]['activity']['activityHash'];
 			var gameModeType = data['3551755444']['availableQuests'][0]['activity']['activityModeType'].toString();
 
@@ -65,7 +54,7 @@ export class TrialsResetManager {
 			}	else {
 				return console.log('Unknown error has occured with trials API, game type was not 41 or 42');
 			}
-			let until = moment().add(4, 'days').format('LL');
+			let until = moment().day(moment().day() > 2 ? 2 : -5).add(1, 'week');
 			channel.send(`Trials of the Nine is now live until the weekly reset occuring on ${until}\n\n`
 				+ `**Map:** ${trialsMap}\n`
 				+ `**Mode:** ${gameMode}`
