@@ -36,7 +36,7 @@ export default class Clear extends Command<SweeperClient> {
 		}
 		await message.channel.bulkDelete(quantity);
 
-		await message.channel.send(`Messages purged ${Constants.animSweeperbot}`);
+		await message.channel.send(`Messages purged ${Constants.sweeperbot}`);
 
 		return this.logger.info('CMD Clear', `Cleared ${totalQuantity} messages. Requested by: ${message.member.user.tag}`);
 	}
