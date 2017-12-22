@@ -150,9 +150,9 @@ export default class Mute extends Command<SweeperClient> {
 										`Set mute duration: :white_check_mark:\n` +
 										`Log to Database: :white_check_mark:\n` +
 										`Inform User: :white_check_mark:\n\n` +
-										`Mute successful for: <@!${user.id}>. **Time:** *${muteTimeHUMN}*. ${Constants.sweeperbot}`);
+										`Mute successful for: <@!${user.id}>. **Time:** *${muteTimeHUMN}*. ${Constants.animSweeperbot}`);
 								} else {
-									actionMsg.edit(`That action was successful. ${Constants.sweeperbot}`);
+									actionMsg.edit(`That action was successful. ${Constants.animSweeperbot}`);
 									message.delete();
 								}
 							})
