@@ -380,7 +380,7 @@ export class Events {
 			embed.addField('Attachment:', message.attachments.map(file => file.url));
 		}
 		embed.setTimestamp();
-		sweeperLogs.send({ embed });
+		sweeperLogs.send(`${message.member.user.tag} (${message.member.id})`, { embed });
 	}
 
 	@on('message')
