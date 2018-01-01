@@ -31,6 +31,9 @@ gulp.task('compile', () => {
     gulp.src('./src/vendors.json')
         .pipe(gulp.dest('bin/'));
 
+    gulp.src('./src/maintenance.json')
+        .pipe(gulp.dest('bin/'));
+
     gulp.src('./src/img/*.*')
         .pipe(gulp.dest('bin/img/'));
 });
