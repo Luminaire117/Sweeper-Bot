@@ -161,9 +161,9 @@ export default class Mute extends Command<SweeperClient> {
 
 				// If message sent in the mod channel, then give full details, otherwise be vague
 				if (message.channel.id === Constants.modChannelId) {
-					banning.edit(`Successfully banned ${user.tag}. ${Constants.sweeperbot}`);
+					banning.edit(`Successfully banned ${user.tag}. ${Constants.animSweeperbot}`);
 				} else {
-					banning.edit(`That action was successful. ${Constants.sweeperbot}`);
+					banning.edit(`That action was successful. ${Constants.animSweeperbot}`);
 					await new Promise((r: any) => setTimeout(r, 5000));
 					banning.delete();
 				}

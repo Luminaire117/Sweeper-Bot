@@ -5,7 +5,7 @@ import * as MuteManager from '../mod/managers/MuteManager';
 import Constants from '../../Constants';
 import * as moment from 'moment';
 
-const config: any = require('../../../config.json');
+const maint: any = require('../../../maintenance.json');
 const { on, registerListeners } = ListenerUtil;
 const fetch = require('snekfetch');
 
@@ -380,7 +380,7 @@ export class Events {
 			embed.addField('Attachment:', message.attachments.map(file => file.url));
 		}
 		embed.setTimestamp();
-		sweeperLogs.send({ embed });
+		sweeperLogs.send(`${message.member.user.tag} (${message.member.id})`, { embed });
 	}
 
 	@on('message')
@@ -456,9 +456,9 @@ export class Events {
 										`\n\n` +
 										`Please note the following planned Destiny maintenance event(s).` +
 										`\n\n` +
-										`__**Tuesday, December 12, 2017 [2017-12-12]**__\n` +
-										`**STARTS:** 7 AM PST (1500 UTC) \n` +
-										`**ENDS:** 2 PM PST (2200 UTC) \n` +
+										`__**${maint.Date}**__\n` +
+										`**STARTS:** ${maint.StartTime}\n` +
+										`**ENDS:** ${maint.EndTime}\n` +
 										`\n\n` +
 										`Note: Maintenance times, including end time, are subject to change by Bungie without notice. For more info see @BungieHelp on Twitter or <https://www.bungie.net/en/Help/Article/13125> Thank you.`);
 					return;
