@@ -1,5 +1,5 @@
 import { Command } from 'yamdbf';
-import { Logger, logger } from 'yambdf';
+import { Logger, logger } from 'yamdbf';
 import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';

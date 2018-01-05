@@ -1,7 +1,8 @@
 import { Collection, Guild, Message, RichEmbed, TextChannel } from 'discord.js';
 import { GuildStorage, ListenerUtil } from 'yamdbf';
+import { Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
-import * as Schedule from 'node-schedule';
+import * as Schedule from 'node-schedule-tz';
 import * as WebRequest from 'web-request';
 import Constants from '../../Constants';
 import Traveler from 'the-traveler';
@@ -12,6 +13,7 @@ const { on, registerListeners } = ListenerUtil;
 
 export class TrialsResetManager {
 	private client: SweeperClient;
+	@logger private readonly logger: Logger;
 	public constructor(client: SweeperClient) {
 		this.client = client;
 		registerListeners(this.client, this);
@@ -24,16 +26,24 @@ export class TrialsResetManager {
 			try {
 				let _this: TrialsResetManager = this;
 
-				await Schedule.scheduleJob('5 9 * * 5', async function() {
+				var rule = new Schedule.RecurrenceRule();
+				rule.dayOfWeek = 5;
+				rule.tz = 'America/Los_Angeles';
+				rule.hour = 10;
+				rule.minute = 3;
+
+				await Schedule.scheduleJob(rule, async function() {
 					await _this.trialsReset(channel);
 				});
 
 			}
-			catch (err) { console.log(`Could not schedule Trials Reset cron job`); }
+			catch (err) {
+				this.logger.error('Helper TrialsReset', 'Could not schedule Trials Reset cron job');
+			}
 		}
-		else
-			console.log(`Could not locate channel to send trials message.`);
-
+		else {
+			this.logger.error('Helper TrialsReset', 'Could not locate channel to send trials message.');
+		}
 	}
 
 	public async trialsReset(channel: TextChannel): Promise<void> {
@@ -49,13 +59,13 @@ export class TrialsResetManager {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
 				modChannel.send('Bungie\'s API is currently unavailable and the automatic trials info was unable to be posted. Please run .trials once servers are back up to post info.');
-				console.log(`getPublicMilestones error ${e}`);
+				this.logger.error('Helper TrialsReset', `getPublicMilestones error ${e}`);
 
 			}
 			var data = res.Response;
 			// get hash for trials
 			if (!('3551755444' in data)) {
-				modChannel.send('Automatic trials post failed, trials is not currently active.');
+				modChannel.send('Automatic trials post failed, trials is not currently active. Please manually run .trials once it is active.');
 			}
 			var trialsHash = data['3551755444']['availableQuests'][0]['activity']['activityHash'];
 			var gameModeType = data['3551755444']['availableQuests'][0]['activity']['activityModeType'].toString();
@@ -70,7 +80,7 @@ export class TrialsResetManager {
 			} else if (gameModeType === '42') {
 				gameMode = 'Survival';
 			}	else {
-				return console.log('Unknown error has occured with trials API, game type was not 41 or 42');
+				return this.logger.error('Helper TrialsReset', 'Unknown error has occured with trials API, game type was not 41 or 42');
 			}
 			let until = moment().add(4, 'days').format('LL');
 			channel.send(`Trials of the Nine is now live until the weekly reset occuring on ${until}\n\n`

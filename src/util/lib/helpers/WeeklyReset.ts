@@ -1,6 +1,6 @@
 import { Collection, Guild, Message, RichEmbed, TextChannel } from 'discord.js';
 import { GuildStorage, ListenerUtil } from 'yamdbf';
-import { Logger, logger } from 'yambdf';
+import { Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
 import * as Schedule from 'node-schedule-tz';
 import * as WebRequest from 'web-request';
@@ -26,16 +26,24 @@ export class WeeklyResetManager {
 			try {
 				let _this: WeeklyResetManager = this;
 
-				await Schedule.scheduleJob('* * * * *', 'America/Los_Angeles', async function() {
+				var rule = new Schedule.RecurrenceRule();
+				rule.dayOfWeek = 2;
+				rule.tz = 'America/Los_Angeles';
+				rule.hour = 9;
+				rule.minute = 3;
+
+				await Schedule.scheduleJob(rule, async function() {
 					await _this.weeklyReset(channel);
 				});
 
 			}
-			catch (err) { this.logger.error('Helper WeeklyReset', 'Could not schedule Weekly Reset cron job'); }
+			catch (err) {
+				this.logger.error('Helper WeeklyReset', 'Could not schedule Weekly Reset cron job');
+			}
 		}
-		else
+		else {
 			this.logger.error('Helper WeeklyReset', `Could not locate channel to send weekly reset message.`);
-
+		}
 	}
 
 	public async weeklyReset(channel: TextChannel): Promise<void> {

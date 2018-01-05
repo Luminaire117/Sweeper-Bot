@@ -1,7 +1,8 @@
 import { Collection, Guild, Message, RichEmbed, TextChannel } from 'discord.js';
 import { GuildStorage, ListenerUtil } from 'yamdbf';
+import { Logger, logger } from 'yamdbf';
 import { SweeperClient } from '../SweeperClient';
-import * as Schedule from 'node-schedule';
+import * as Schedule from 'node-schedule-tz';
 import * as WebRequest from 'web-request';
 import * as request from 'request';
 import * as cheerio from 'cheerio';
@@ -14,6 +15,7 @@ const { on, registerListeners } = ListenerUtil;
 
 export class XurResetManager {
 	private client: SweeperClient;
+	@logger private readonly logger: Logger;
 	public constructor(client: SweeperClient) {
 		this.client = client;
 		registerListeners(this.client, this);
@@ -26,16 +28,24 @@ export class XurResetManager {
 			try {
 				let _this: XurResetManager = this;
 
-				await Schedule.scheduleJob('10 9 * * 5', async function() {
+				var rule = new Schedule.RecurrenceRule();
+				rule.dayOfWeek = 5;
+				rule.tz = 'America/Los_Angeles';
+				rule.hour = 9;
+				rule.minute = 10;
+
+				await Schedule.scheduleJob(rule, async function() {
 					await _this.xurReset(channel);
 				});
 
 			}
-			catch (err) { console.log(`Could not schedule Xur Reset cron job`); }
+			catch (err) {
+				this.logger.error('Helper XurReset', 'Could not schedule Xur Reset cron job');
+			}
 		}
-		else
-			console.log(`Could not locate channel to send xur reset message.`);
-
+		else {
+			this.logger.error('Could not locate channel to send xur reset message.');
+		}
 	}
 
 	public async xurReset(channel: TextChannel): Promise<void> {
@@ -48,7 +58,7 @@ export class XurResetManager {
 			var URL = baseUrl + month + '-' + day + '-' + year;
 			request(URL, function(error, response, body) {
 				if (error !== null) {
-					console.log('xur request error:', error);
+					this.logger.error('Helper XurReset', `Request error ${error}`);
 					return modChannel.send('Xur\'s API is currently unavailable and the automatic xur post wasn\'t able to run. Please run .xur once servers are back up to post info.');
 				}
 				const $ = cheerio.load(body);
@@ -63,7 +73,9 @@ export class XurResetManager {
 					+ `**Warlock:** ${xurItems[3]} - 23 shards\n`
 					+ `**Titan:** ${xurItems[2]} - 23 shards\n`
 					+ `**Hunter:** ${xurItems[1]} - 23 shards\n`
-					+ `**Gun:** ${xurItems[0]} - 29 shards`);
+					+ `**Gun:** ${xurItems[0]} - 29 shards\n\n`
+					+ `Three of Coins - 31 shards\n`
+					+ `Fated Engram - 97 shards (Reminder: **Once per account per week**)`);
 			});
 		} catch (err) { return; }
 	}

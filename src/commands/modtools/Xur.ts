@@ -1,5 +1,5 @@
 import { Command } from 'yamdbf';
-import { Logger, logger } from 'yambdf';
+import { Logger, logger } from 'yamdbf';
 import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';
@@ -49,7 +49,9 @@ export default class Xur extends Command {
 				+ `**Warlock:** ${xurItems[3]} - 23 shards\n`
 				+ `**Titan:** ${xurItems[2]} - 23 shards\n`
 				+ `**Hunter:** ${xurItems[1]} - 23 shards\n`
-				+ `**Gun:** ${xurItems[0]} - 29 shards`);
+				+ `**Gun:** ${xurItems[0]} - 29 shards\n\n`
+				+ `Three of Coins - 31 shards\n`
+				+ `Fated Engram - 97 shards (Reminder: **Once per account per week**)`);
 			channel.stopTyping();
 		});
 	}
