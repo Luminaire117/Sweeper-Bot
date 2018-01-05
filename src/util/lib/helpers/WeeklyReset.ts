@@ -1,7 +1,8 @@
 import { Collection, Guild, Message, RichEmbed, TextChannel } from 'discord.js';
 import { GuildStorage, ListenerUtil } from 'yamdbf';
+import { Logger, logger } from 'yambdf';
 import { SweeperClient } from '../SweeperClient';
-import * as Schedule from 'node-schedule';
+import * as Schedule from 'node-schedule-tz';
 import * as WebRequest from 'web-request';
 import Constants from '../../Constants';
 import Traveler from 'the-traveler';
@@ -12,6 +13,7 @@ const { on, registerListeners } = ListenerUtil;
 
 export class WeeklyResetManager {
 	private client: SweeperClient;
+	@logger private readonly logger: Logger;
 	public constructor(client: SweeperClient) {
 		this.client = client;
 		registerListeners(this.client, this);
@@ -24,15 +26,15 @@ export class WeeklyResetManager {
 			try {
 				let _this: WeeklyResetManager = this;
 
-				await Schedule.scheduleJob('3 9 * * 2', async function() {
+				await Schedule.scheduleJob('* * * * *', 'America/Los_Angeles', async function() {
 					await _this.weeklyReset(channel);
 				});
 
 			}
-			catch (err) { console.log(`Could not schedule Weekly Reset cron job`); }
+			catch (err) { this.logger.error('Helper WeeklyReset', 'Could not schedule Weekly Reset cron job'); }
 		}
 		else
-			console.log(`Could not locate channel to send weekly reset message.`);
+			this.logger.error('Helper WeeklyReset', `Could not locate channel to send weekly reset message.`);
 
 	}
 
@@ -47,8 +49,8 @@ export class WeeklyResetManager {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
-				modChannel.send('Bungie\'s API is currently unavailable and the automatic weekly reset was unable to be posted. Please run .weekly once servers are back up to post reset info.');
-				console.log(`getPublicMilestones error ${e}`);
+				modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please manually run command .weekly once servers are back up.');
+				this.logger.error('Helper WeeklyReset', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
 			}
 			var data = res.Response;
 			// get hashes for name and modifiers(if available) of current nightfall and raid
@@ -75,7 +77,7 @@ export class WeeklyResetManager {
 			try {
 				var nf = await traveler.getDestinyEntityDefinition('DestinyActivityDefinition', nfHash);
 			} catch (e) {
-				console.log(`nfHash error ${e}`);
+				this.logger.error('Helper WeeklyReset', `nfHash error ${e}`);
 			}
 			const nfName = nf.Response.displayProperties.name;
 			const nfDescription = nf.Response.displayProperties.description;
@@ -89,7 +91,7 @@ export class WeeklyResetManager {
 				try {
 					modifier = await traveler.getDestinyEntityDefinition('DestinyActivityModifierDefinition', modHash);
 				} catch (e) {
-					console.log(`modHash error ${e}`);
+					this.logger.error('Helper WeeklyReset', `modHash error ${e}`);
 				}
 				var modifierName = modifier.Response['displayProperties']['name'];
 				var modifierDescription = modifier.Response['displayProperties']['description'];
@@ -99,7 +101,7 @@ export class WeeklyResetManager {
 			// raid order
 			var order;
 			if (Constants.raidOrder[leviathanNormalHash][0] === '' && Constants.raidOrder[leviathanPrestigeHash][0] === '') {
-				channel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
+				modChannel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
 			} else {
 				if (Constants.raidOrder[leviathanNormalHash][0] !== '') {
 					order = Constants.raidOrder[leviathanNormalHash];

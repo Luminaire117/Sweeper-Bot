@@ -1,4 +1,5 @@
 import { Command } from 'yamdbf';
+import { Logger, logger } from 'yambdf';
 import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';
@@ -9,6 +10,7 @@ import * as request from 'request';
 import * as cheerio from 'cheerio';
 
 export default class Xur extends Command {
+	@logger private readonly logger: Logger;
 	public constructor() {
 		super({
 			name: 'xur',
@@ -32,7 +34,7 @@ export default class Xur extends Command {
 		var URL = baseUrl + month + '-' + day + '-' + year;
 		request(URL, function(error, response, body) {
 			if (error !== null) {
-				console.log('xur request error:', error);
+				this.logger.error('CMD Xur', `Error reaching xur website ${error}`);
 				return modChannel.send('Xur\'s API is currently unavailable and the automatic xur post wasn\'t able to run. Please run .xur once servers are back up to post info.');
 			}
 			const $ = cheerio.load(body);

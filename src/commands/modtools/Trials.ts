@@ -1,4 +1,5 @@
 import { Command } from 'yamdbf';
+import { Logger, logger } from 'yambdf';
 import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';
@@ -7,6 +8,7 @@ import * as moment from 'moment';
 const config: any = require('../../config.json');
 
 export default class Trials extends Command {
+	@logger private readonly logger: Logger;
 	public constructor() {
 		super({
 			name: 'trials',
@@ -21,6 +23,8 @@ export default class Trials extends Command {
 	public async action(message: Message, args: string[]): Promise<any> {
 
 		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.bungieAnnouncements);
+		const modChannel: TextChannel = <TextChannel> this.client.channels.get(Constants.modChannelId);
+
 		try {
 			const traveler = new Traveler({
 				apikey: Constants.destinyAPIKey,
@@ -30,14 +34,13 @@ export default class Trials extends Command {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
-				console.log(`getPublicMilestones error ${e}`);
-				return message.reply('Bungie\'s API is currently unavailable, please try again later.');
-
+				modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
+				this.logger.error('CMD Trials', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
 			}
 			var data = res.Response;
 			// get hash for trials
 			if (!('3551755444' in data)) {
-				return message.reply('Trials is not currently active, please try again on Friday after 9AM Pacific.');
+				modChannel.send('Trials is not currently active, please try again on Friday after 10AM Pacific.');
 			}
 			var trialsHash = data['3551755444']['availableQuests'][0]['activity']['activityHash'];
 			var gameModeType = data['3551755444']['availableQuests'][0]['activity']['activityModeType'].toString();
@@ -52,7 +55,8 @@ export default class Trials extends Command {
 			} else if (gameModeType === '42') {
 				gameMode = 'Survival';
 			}	else {
-				return console.log('Unknown error has occured with trials API, game type was not 41 or 42');
+				modChannel.send('Unknown API error has occured, please alert a dev.');
+				return this.logger.error('CMD Trials', `Unknown error has occured with trials API, game type was not 41 or 42`);
 			}
 			let until = moment().day(moment().day() > 2 ? 2 : -5).add(1, 'week');
 			channel.send(`Trials of the Nine is now live until the weekly reset occuring on ${until}\n\n`

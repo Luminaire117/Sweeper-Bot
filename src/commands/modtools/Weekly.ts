@@ -1,4 +1,5 @@
 import { Command } from 'yamdbf';
+import { Logger, logger } from 'yambdf';
 import { Collection, GuildMember, Message, RichEmbed, Role, User, TextChannel } from 'discord.js';
 import Constants from '../../util/Constants';
 import Traveler from 'the-traveler';
@@ -7,6 +8,7 @@ import * as moment from 'moment';
 const config: any = require('../../config.json');
 
 export default class Weekly extends Command {
+	@logger private readonly logger: Logger;
 	public constructor() {
 		super({
 			name: 'weekly',
@@ -20,6 +22,7 @@ export default class Weekly extends Command {
 
 	public async action(message: Message, args: string[]): Promise<any> {
 		const channel: TextChannel = <TextChannel> this.client.channels.get(Constants.bungieAnnouncements);
+		const modChannel: TextChannel = <TextChannel> this.client.channels.get(Constants.modChannelId);
 		// start typing
 		channel.startTyping();
 
@@ -31,8 +34,8 @@ export default class Weekly extends Command {
 		try {
 			var res = await traveler.getPublicMilestones();
 		} catch (e) {
-			console.log(`getPublicMilestones error ${e}`);
-			return message.reply('Bungie\'s API is currently unavailable, please try again later.');
+			modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
+			this.logger.error('CMD Weekly', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
 		}
 		var data = res.Response;
 		// get hashes for name and modifiers(if available) of current nightfall and raid
@@ -58,7 +61,8 @@ export default class Weekly extends Command {
 		try {
 			var nf = await traveler.getDestinyEntityDefinition('DestinyActivityDefinition', nfHash);
 		} catch (e) {
-			console.log(`nfHash error ${e}`);
+			modChannel.send('An error has occured, please try again later or let a dev know.');
+			this.logger.error('CMD Weekly', `Nightfall hash error has occured ${e}`);
 		}
 		const nfName = nf.Response.displayProperties.name;
 		const nfDescription = nf.Response.displayProperties.description;
@@ -71,7 +75,8 @@ export default class Weekly extends Command {
 			try {
 				modifier = await traveler.getDestinyEntityDefinition('DestinyActivityModifierDefinition', modHash);
 			} catch (e) {
-				console.log(`modHash error ${e}`);
+				modChannel.send('An error has occured, please try again later or let a dev know.');
+				this.logger.error('CMD Weekly', `Nightfall modifier hash error has occured ${e}`);
 			}
 			var modifierName = modifier.Response['displayProperties']['name'];
 			var modifierDescription = modifier.Response['displayProperties']['description'];
@@ -81,7 +86,7 @@ export default class Weekly extends Command {
 		// raid order
 		var order;
 		if (Constants.raidOrder[leviathanNormalHash][0] === '' && Constants.raidOrder[leviathanPrestigeHash][0] === '') {
-			channel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
+			modChannel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
 		} else {
 			if (Constants.raidOrder[leviathanNormalHash][0] !== '') {
 				order = Constants.raidOrder[leviathanNormalHash];

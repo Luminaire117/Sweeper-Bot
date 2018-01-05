@@ -190,7 +190,7 @@ Constants.raidOrder = {
 	'2693136602': ['Dogs', 'Gauntlet', 'Baths'],
 	'2693136603': ['Dogs', 'Baths', 'Gauntlet'],
 	'2693136604': ['Gauntlet', 'Baths', 'Dogs'],
-	'2693136605': [''],
+	'2693136605': ['Gauntlet', 'Dogs', 'Baths'],
 	'2449714930': ['Baths', 'Gauntlet', 'Dogs'],
 	'3446541099': ['Dogs', 'Baths', 'Gauntlet'],
 	'3879860661': ['Baths', 'Dogs', 'Gauntlet'],
