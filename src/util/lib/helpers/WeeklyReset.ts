@@ -38,11 +38,11 @@ export class WeeklyResetManager {
 
 			}
 			catch (err) {
-				this.logger.error('Helper WeeklyReset', 'Could not schedule Weekly Reset cron job');
+				return this.logger.error('Helper WeeklyReset', 'Could not schedule Weekly Reset cron job');
 			}
 		}
 		else {
-			this.logger.error('Helper WeeklyReset', `Could not locate channel to send weekly reset message.`);
+			return this.logger.error('Helper WeeklyReset', `Could not locate channel to send weekly reset message.`);
 		}
 	}
 
@@ -57,8 +57,8 @@ export class WeeklyResetManager {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
-				modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please manually run command .weekly once servers are back up.');
 				this.logger.error('Helper WeeklyReset', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
+				return modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please manually run command .weekly once servers are back up.');
 			}
 			var data = res.Response;
 			// get hashes for name and modifiers(if available) of current nightfall and raid
@@ -85,7 +85,7 @@ export class WeeklyResetManager {
 			try {
 				var nf = await traveler.getDestinyEntityDefinition('DestinyActivityDefinition', nfHash);
 			} catch (e) {
-				this.logger.error('Helper WeeklyReset', `nfHash error ${e}`);
+				return this.logger.error('Helper WeeklyReset', `nfHash error ${e}`);
 			}
 			const nfName = nf.Response.displayProperties.name;
 			const nfDescription = nf.Response.displayProperties.description;
@@ -99,7 +99,7 @@ export class WeeklyResetManager {
 				try {
 					modifier = await traveler.getDestinyEntityDefinition('DestinyActivityModifierDefinition', modHash);
 				} catch (e) {
-					this.logger.error('Helper WeeklyReset', `modHash error ${e}`);
+					return this.logger.error('Helper WeeklyReset', `modHash error ${e}`);
 				}
 				var modifierName = modifier.Response['displayProperties']['name'];
 				var modifierDescription = modifier.Response['displayProperties']['description'];
@@ -109,7 +109,7 @@ export class WeeklyResetManager {
 			// raid order
 			var order;
 			if (Constants.raidOrder[leviathanNormalHash][0] === '' && Constants.raidOrder[leviathanPrestigeHash][0] === '') {
-				modChannel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
+				return modChannel.send(`This week's raid order is not recorded yet, ${leviathanNormalHash}, ${leviathanPrestigeHash}.`);
 			} else {
 				if (Constants.raidOrder[leviathanNormalHash][0] !== '') {
 					order = Constants.raidOrder[leviathanNormalHash];

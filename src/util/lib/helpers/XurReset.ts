@@ -40,11 +40,11 @@ export class XurResetManager {
 
 			}
 			catch (err) {
-				this.logger.error('Helper XurReset', 'Could not schedule Xur Reset cron job');
+				return this.logger.error('Helper XurReset', 'Could not schedule Xur Reset cron job');
 			}
 		}
 		else {
-			this.logger.error('Could not locate channel to send xur reset message.');
+			return this.logger.error('Could not locate channel to send xur reset message.');
 		}
 	}
 

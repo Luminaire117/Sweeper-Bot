@@ -34,8 +34,8 @@ export default class Weekly extends Command {
 		try {
 			var res = await traveler.getPublicMilestones();
 		} catch (e) {
-			modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
 			this.logger.error('CMD Weekly', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
+			return modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
 		}
 		var data = res.Response;
 		// get hashes for name and modifiers(if available) of current nightfall and raid
@@ -61,8 +61,8 @@ export default class Weekly extends Command {
 		try {
 			var nf = await traveler.getDestinyEntityDefinition('DestinyActivityDefinition', nfHash);
 		} catch (e) {
-			modChannel.send('An error has occured, please try again later or let a dev know.');
 			this.logger.error('CMD Weekly', `Nightfall hash error has occured ${e}`);
+			return modChannel.send('An error has occured, please try again later or let a dev know.');
 		}
 		const nfName = nf.Response.displayProperties.name;
 		const nfDescription = nf.Response.displayProperties.description;
@@ -75,8 +75,8 @@ export default class Weekly extends Command {
 			try {
 				modifier = await traveler.getDestinyEntityDefinition('DestinyActivityModifierDefinition', modHash);
 			} catch (e) {
-				modChannel.send('An error has occured, please try again later or let a dev know.');
 				this.logger.error('CMD Weekly', `Nightfall modifier hash error has occured ${e}`);
+				return modChannel.send('An error has occured, please try again later or let a dev know.');
 			}
 			var modifierName = modifier.Response['displayProperties']['name'];
 			var modifierDescription = modifier.Response['displayProperties']['description'];

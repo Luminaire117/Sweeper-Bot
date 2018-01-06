@@ -38,11 +38,11 @@ export class TrialsResetManager {
 
 			}
 			catch (err) {
-				this.logger.error('Helper TrialsReset', 'Could not schedule Trials Reset cron job');
+				return this.logger.error('Helper TrialsReset', 'Could not schedule Trials Reset cron job');
 			}
 		}
 		else {
-			this.logger.error('Helper TrialsReset', 'Could not locate channel to send trials message.');
+			return this.logger.error('Helper TrialsReset', 'Could not locate channel to send trials message.');
 		}
 	}
 
@@ -58,14 +58,14 @@ export class TrialsResetManager {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
-				modChannel.send('Bungie\'s API is currently unavailable and the automatic trials info was unable to be posted. Please run .trials once servers are back up to post info.');
 				this.logger.error('Helper TrialsReset', `getPublicMilestones error ${e}`);
+				return modChannel.send('Bungie\'s API is currently unavailable and the automatic trials info was unable to be posted. Please run .trials once servers are back up to post info.');
 
 			}
 			var data = res.Response;
 			// get hash for trials
 			if (!('3551755444' in data)) {
-				modChannel.send('Automatic trials post failed, trials is not currently active. Please manually run .trials once it is active.');
+				return modChannel.send('Automatic trials post failed, trials is not currently active. Please manually run .trials once it is active.');
 			}
 			var trialsHash = data['3551755444']['availableQuests'][0]['activity']['activityHash'];
 			var gameModeType = data['3551755444']['availableQuests'][0]['activity']['activityModeType'].toString();

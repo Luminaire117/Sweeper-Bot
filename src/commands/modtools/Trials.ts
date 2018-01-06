@@ -34,13 +34,13 @@ export default class Trials extends Command {
 			try {
 				var res = await traveler.getPublicMilestones();
 			} catch (e) {
-				modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
 				this.logger.error('CMD Trials', `Unable to reach Destiny API.\n\n**Error:** ${e}`);
+				return modChannel.send('Unable to reach Destiny API, if maintenance is ongoing, please try again after.');
 			}
 			var data = res.Response;
 			// get hash for trials
 			if (!('3551755444' in data)) {
-				modChannel.send('Trials is not currently active, please try again on Friday after 10AM Pacific.');
+				return modChannel.send('Trials is not currently active, please try again on Friday after 10AM Pacific.');
 			}
 			var trialsHash = data['3551755444']['availableQuests'][0]['activity']['activityHash'];
 			var gameModeType = data['3551755444']['availableQuests'][0]['activity']['activityModeType'].toString();
@@ -55,8 +55,8 @@ export default class Trials extends Command {
 			} else if (gameModeType === '42') {
 				gameMode = 'Survival';
 			}	else {
-				modChannel.send('Unknown API error has occured, please alert a dev.');
-				return this.logger.error('CMD Trials', `Unknown error has occured with trials API, game type was not 41 or 42`);
+				this.logger.error('CMD Trials', `Unknown error has occured with trials API, game type was not 41 or 42`);
+				return modChannel.send('Unknown API error has occured, please alert a dev.');
 			}
 			let until = moment().day(moment().day() > 2 ? 2 : -5).add(1, 'week');
 			channel.send(`Trials of the Nine is now live until the weekly reset occuring on ${until}\n\n`
